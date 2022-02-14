@@ -9,8 +9,7 @@ import matplotlib.pyplot as plt
 
 
 def main(method,output):
-    print('hi')
-
+    print('placeholder')
 ## Functions
 # dx/dt = f(x,t)
 def f(x,t):
