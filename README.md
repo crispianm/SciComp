@@ -1,3 +1,2 @@
-# SciComp
-Scientific Computing
-emat30008
+# Scientific Computing
+Software suite of various numerical ODE and PDE solution methods.
