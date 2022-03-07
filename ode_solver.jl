@@ -14,12 +14,12 @@ end
 
 function rk4_step(f, x0, tn, h, arg...)
 
-    k1 = h * f(x0, tn, arg...)
-    k2 = h * f((x0 .+ h./2), (tn .+ k1./2), arg...)
-    k3 = h * f((x0 .+ h./2), (tn .+ k2./2), arg...)
-    k4 = h * f((x0 .+ h), (tn .+ k3), arg...)
+    k1 = f(x0, tn, arg...)
+    k2 = f((x0 .+ (h.*k1)./2), (tn .+ h./2), arg...)
+    k3 = f((x0 .+ (h.*k2)./2), (tn .+ h./2), arg...)
+    k4 = f((x0 .+ h.*k3), (tn .+ h), arg...)
 
-    xn1 = x0 + (k1 .+ 2*k2 .+ 2*k3 .+ k4)./6
+    xn1 = x0 + h*(k1 .+ 2*k2 .+ 2*k3 .+ k4)./6
     tn1 = tn + h
 
     return [xn1, tn1]
