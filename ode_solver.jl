@@ -8,7 +8,7 @@ function euler_step(f, x0, tn, h, arg...)
     xn1 = x0 + h*f(x0, tn, arg...)
     tn1 = tn + h
 
-    return [xn1,tn1]
+    return [xn1, tn1]
 end
 
 
@@ -51,12 +51,13 @@ function solve_ode(f, x0, t, method, deltat_max, arg...)
         throw(error("Please make sure the first value of the time series is 0."))
     end
     
-    x_series = Any[x0]
+    x_series = Array{Int64}(undef, 0, length(x0))
+    x_series = [x_series; x0]
     x = x0
     for i = 1:(length(t)-1)
         
         x = solve_to(f, x, t[i], t[i + 1], deltat_max, method)
-        push!(x_series, x)
+        x_series = [x_series; x]
 
     end
 
