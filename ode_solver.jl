@@ -1,8 +1,3 @@
-function f(x, t)
-    return x
-end
-
-
 function euler_step(f, x0, tn, h, arg...)
 
     xn1 = x0 + h*f(x0, tn, arg...)
@@ -32,6 +27,7 @@ function solve_to(f, x0, t1, t2, deltat_max, method, arg...)
 
     x = x0
     t = t1
+
     for i = 1:timesteps
         x, t = method(f, x, t, deltat_max, arg...)
     end
@@ -53,16 +49,14 @@ function solve_ode(f, x0, t, method, deltat_max, arg...)
     
     x_series = Array{Int64}(undef, 0, length(x0))
     x_series = [x_series; x0]
+
     x = x0
     for i = 1:(length(t)-1)
-        
         x = solve_to(f, x, t[i], t[i + 1], deltat_max, method)
         x_series = [x_series; x]
-
     end
 
     return x_series
-
 end
 
 
