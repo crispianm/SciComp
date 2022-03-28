@@ -1,6 +1,5 @@
 include("ode_solver.jl")
 
-
 x0 = [1.]
 t = [0, 1]
 h = exp10.(range(-5,0,80))
