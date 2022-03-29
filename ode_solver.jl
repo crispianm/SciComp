@@ -47,7 +47,7 @@ function solve_ode(f, x0, t, method, deltat_max, arg...)
         throw(error("Please make sure the first value of the time series is 0."))
     end
     
-    x_series = Array{Int64}(undef, 0, length(x0))
+    x_series = Matrix{Float64}(undef, 0, length(x0))
     x_series = [x_series; x0]
 
     x = x0
