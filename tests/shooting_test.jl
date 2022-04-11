@@ -1,3 +1,7 @@
+include("../visualisation.jl")
+include("../ode_solver.jl")
+
+
 function hopf2d(u, beta, sigma=-1.0)
 
     u1, u2 = u
