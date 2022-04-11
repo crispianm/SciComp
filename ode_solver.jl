@@ -1,27 +1,13 @@
-# function euler_step(f, x0, tn, h, arg...)
-
-#     euler = Any[]
-#     xn1 = x0 + h*f(x0, tn, arg...)
-#     # print(xn1)
-#     tn1 = tn + h
-
-#     push!(euler, xn1)
-#     push!(euler, tn1)
-
-#     return euler
-# end
-
 function euler_step(f, x0, tn, h, arg...)
 
     xn1 = x0 + h*f(x0, tn, arg...)
     tn1 = tn + h
 
-    return [xn1; tn1]
+    return [xn1, tn1]
 end
 
-function rk4_step(f, x0, tn, h, arg...)
 
-    rk4 = Any[]
+function rk4_step(f, x0, tn, h, arg...)
 
     k1 = f(x0, tn, arg...)
     k2 = f((x0 .+ (h.*k1)./2), (tn .+ h./2), arg...)
@@ -31,14 +17,11 @@ function rk4_step(f, x0, tn, h, arg...)
     xn1 = x0 + h*(k1 .+ 2*k2 .+ 2*k3 .+ k4)./6
     tn1 = tn + h
 
-    push!(rk4, xn1)
-    push!(rk4, tn1)
-
-    return rk4
+    return [xn1, tn1]
 end
 
 
-function solve_to(f, x0, t1, t2, method, deltat_max, arg...)
+function solve_to(f, x0, t1, t2, deltat_max, method, arg...)
 
     timesteps = floor((t2 - t1) / deltat_max)
 
@@ -64,13 +47,13 @@ function solve_ode(f, x0, t, method, deltat_max, arg...)
         throw(error("Please make sure the first value of the time series is 0."))
     end
     
-    x_series = Any[]
-    push!(x_series, x0[1])
+    x_series = Matrix{Float64}(undef, 0, length(x0))
+    x_series = [x_series; x0]
 
     x = x0
     for i = 1:(length(t)-1)
-        x = solve_to(f, x, t[i], t[i + 1], method, deltat_max, arg...)
-        push!(x_series, x)
+        x = solve_to(f, x, t[i], t[i + 1], deltat_max, method)
+        x_series = [x_series; x]
     end
 
     return x_series
