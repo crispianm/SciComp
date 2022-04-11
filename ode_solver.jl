@@ -55,7 +55,7 @@ function solve_ode(f, x0, t, method, deltat_max, arg...)
         x = solve_to(f, x, t[i], t[i + 1], deltat_max, method)
         x_series = [x_series; x]
     end
-
+    
     return x_series
 end
 
