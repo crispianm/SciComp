@@ -17,34 +17,24 @@ function plot_ode(ode, u0, t, labels=["t" "x"])
 
 end
 
-function plot_phase_portrait()
+function plot_phase_portrait(ode, u0, t)
 
-    # Define the ODE
-    # ode = @(t, u) [u[2]; -u[1] - u[2]*u[2]]
+    deltat_max = 0.01
+    solution = solve_ode(ode, u0, t, rk4_step, deltat_max)
+    x = solution[:,1]
+    y = solution[:,2]
 
-    # Define the initial conditions
-    u0 = [1; 0]
+    # Create traces
+    rk4 = scatter(x=x, y=y, mode="lines", name="rk4 approximation of ODE", showlegend=true)
 
-    # Define the time interval
-    t = linspace(0, 10, 100)
+    layout = Layout()
 
-    # Plot the phase portrait
-    plot_ode(ode, u0, t)
+    plot([rk4], layout)
 
 end
 
 function  plot_nullcline()
     
-        # Define the ODE
-        # ode = @(t, u) [u[2]; -u[1] - u[2]*u[2]]
-    
-        # Define the initial conditions
-        u0 = [1; 0]
-    
-        # Define the time interval
-        t = linspace(0, 10, 100)
-    
-        # Plot the nullcline
-        plot_ode(ode, u0, t, ["t" "u"])
+    whirrr
     
 end
