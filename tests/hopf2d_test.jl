@@ -2,7 +2,7 @@ include("../visualisation.jl")
 include("../ode_solver.jl")
 include("../numerical_shooting.jl")
 
-function hopf2d(u, t, beta, sigma=-1.0)
+function hopf2d(u, t, beta, sigma=-1.0, arg...)
 
     u1, u2 = u
     du1dt = beta*u1 - u2 + sigma*u1*(u1^2 + u2^2)
@@ -11,7 +11,7 @@ function hopf2d(u, t, beta, sigma=-1.0)
     return [du1dt du2dt]
 end
 
-function hopf_sol(t, beta, theta=0.0)
+function hopf_sol(t, beta, theta=0.0, arg...)
 
     u1 = √(beta) * cos.(t .+ theta)
     u2 = √(beta) * sin.(t .+ theta)

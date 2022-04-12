@@ -1,7 +1,7 @@
 using PlotlyJS
 include("ode_solver.jl")
 
-function plot_ode(ode, u0, t, labels=["t" "x"])
+function plot_ode(ode, u0, t, labels=["t" "x"], arg...)
 
     deltat_max = 0.01
     solution = solve_ode(ode, u0, t, rk4_step, deltat_max)
@@ -22,7 +22,7 @@ function plot_ode(ode, u0, t, labels=["t" "x"])
 end
 
 
-function plot_ode_3d(ode, u0, t, labels=["u1" "u2" "u3"])
+function plot_ode_3d(ode, u0, t, labels=["u1" "u2" "u3"], arg...)
 
     deltat_max = 0.01
     solution = solve_ode(ode, u0, t, rk4_step, deltat_max)
@@ -45,7 +45,7 @@ function plot_ode_3d(ode, u0, t, labels=["u1" "u2" "u3"])
 end
 
 
-function plot_phase_portrait(ode, u0, t, labels=["x" "y"])
+function plot_phase_portrait(ode, u0, t, labels=["x" "y"], arg...)
 
     deltat_max = 0.01
     solution = solve_ode(ode, u0, t, rk4_step, deltat_max)
@@ -64,7 +64,7 @@ function plot_phase_portrait(ode, u0, t, labels=["x" "y"])
 end
 
 
-function plot_phase_portrait_3d(ode, u0, t, labels=["u1" "u2" "u3"])
+function plot_phase_portrait_3d(ode, u0, t, labels=["u1" "u2" "u3"], arg...)
 
     deltat_max = 0.01
     solution = solve_ode(ode, u0, t, rk4_step, deltat_max)
@@ -97,7 +97,7 @@ function plot_phase_portrait_3d(ode, u0, t, labels=["u1" "u2" "u3"])
 end
 
 
-function  plot_nullcline()
+function  plot_nullcline(ode, arg...)
     
     whirrr
     
