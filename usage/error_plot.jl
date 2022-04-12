@@ -1,3 +1,4 @@
+using PlotlyJS
 include("ode_solver.jl")
 
 function f(x,t)
@@ -19,8 +20,6 @@ for hvalue in h
     push!(rk4_error, abs.(rk4_sol.-real))
 end
 
-using PlotlyJS
-
 
 t1 = scatter(;x=h,
               y=euler_error,
@@ -34,7 +33,13 @@ t2 = scatter(;x=h,
 
 
 
-layout = Layout(xaxis_type="log", xaxis_exponentformat = "power", yaxis_type="log",  yaxis_exponentformat = "power")
+layout = Layout(
+    xaxis_type="log",
+    xaxis_exponentformat = "power",
+    xaxis_title = "Δt",
+    yaxis_type="log",
+    yaxis_exponentformat = "power",
+    yaxis_title = "Error")
 
 data = [t1, t2]
 

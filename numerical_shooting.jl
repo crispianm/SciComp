@@ -25,8 +25,8 @@ function find_limit_cycle(f, u0, T, phase_index=1, arg...)
     U = [u0 T]
     solution = nlsolve((u) -> shoot(f, u), U).zero
 
-    u01 = solution[:, 1:end-1]
-    T1 = solution[end]
+    u0_1 = solution[:, 1:end-1]
+    T_1 = solution[end]
 
-    return u01, T1
+    return u0_1, T_1
 end
