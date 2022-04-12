@@ -43,7 +43,7 @@ end
 
 function solve_ode(f, x0, t, method, deltat_max, arg...)
     
-    if(!isapprox(t[1], 0.0; atol=eps(Float64), rtol=0))
+    if t[1] != 0
         throw(error("Please make sure the first value of the time series is 0."))
     end
     

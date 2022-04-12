@@ -71,13 +71,6 @@ function plot_phase_portrait_3d(ode, u0, t, labels=["u1" "u2" "u3"], arg...)
     x = solution[:,1]
     y = solution[:,2]
     z = solution[:,3]
-    
-    # Create traces
-    # rk4 = scatter_3d(x=x, y=y, z=z, mode="lines", name="rk4 approximation of ODE", showlegend=true)
-
-    # layout = Layout()
-
-    # plot([rk4], layout)
 
     plot(
         scatter(
@@ -96,9 +89,3 @@ function plot_phase_portrait_3d(ode, u0, t, labels=["u1" "u2" "u3"], arg...)
 
 end
 
-
-function  plot_nullcline(ode, arg...)
-    
-    whirrr
-    
-end
