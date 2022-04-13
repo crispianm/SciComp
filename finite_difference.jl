@@ -30,7 +30,7 @@ function forward_euler(u_I, kappa, L, T, mx, mt)
         # Forward Euler timestep at inner mesh points
         # PDE discretised at position x[i], time t[j]
 
-        u_jp1[2:end] = A_FE*(u_j[2:end])
+        u_jp1[2:end] = A_FE * u_j[2:end]
 
         # Boundary conditions
         u_jp1[1] = 0
@@ -58,7 +58,7 @@ function backward_euler(u_I, kappa, L, T, mx, mt)
     println("lambda = ", lmbda)
 
     # Create A_FE matrix
-    A_FE = Tridiagonal(ones(mx-1)*(lmbda), ones(mx)*(1 - 2*lmbda), ones(mx-1)*(lmbda))
+    A_FE = Tridiagonal(ones(mx-1)*(-lmbda), ones(mx)*(1 + 2*lmbda), ones(mx-1)*(-lmbda))
 
     # Set up the solution variables
     u_j = zeros(size(x))        # u at current time step
@@ -74,7 +74,7 @@ function backward_euler(u_I, kappa, L, T, mx, mt)
         # Forward Euler timestep at inner mesh points
         # PDE discretised at position x[i], time t[j]
 
-        u_jp1[2:end] = A_FE*(u_j[2:end])
+        u_jp1[2:end] = A_FE \ u_j[2:end]
 
         # Boundary conditions
         u_jp1[1] = 0
