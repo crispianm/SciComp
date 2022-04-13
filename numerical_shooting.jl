@@ -5,6 +5,7 @@ function G(f, u0, t0, T, arg...)
 
     F = solve_ode(f, u0, [t0 T], rk4_step, 0.001, arg...)
     g = u0 .- F[[end], :]
+    
     return g
 end
 
