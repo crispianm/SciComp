@@ -17,6 +17,7 @@ function hopf2d(u, t, beta, sigma=-1.0, arg...)
     return [du1dt du2dt]
 end
 
+
 function hopf2d_modified(u, t, beta, sigma=-1.0, arg...)
 
     u1, u2 = u
