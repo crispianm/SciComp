@@ -32,9 +32,9 @@ t = LinRange(0, T, mt+1)     # mesh points in time
 deltax = x[2] - x[1]            # gridspacing in x
 deltat = t[2] - t[1]            # gridspacing in t
 lmbda = kappa*deltat/(deltax^2)    # mesh fourier number
-println("deltax=",deltax)
-println("deltat=",deltat)
-println("lambda=",lmbda)
+println("deltax = ", deltax)
+println("deltat = ", deltat)
+println("lambda = ", lmbda)
 
 # Set up the solution variables
 u_j = zeros(size(x))        # u at current time step

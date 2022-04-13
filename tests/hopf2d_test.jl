@@ -52,3 +52,12 @@ u2_plot = scatter(x=t, y=u2, mode="lines", name="u2 - analytic", showlegend=true
 layout = Layout(xaxis_title = "time")
 
 plot([x_plot, y_plot, u1_plot, u2_plot], layout)
+
+
+
+using Test
+function foo(x)
+    length(x)^2
+end
+println(@test foo("bar") == 9)
+println(@test foo("bar") == 10)
