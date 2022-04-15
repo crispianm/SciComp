@@ -7,6 +7,34 @@ function euler_step(f, x0, tn, Δt, arg...)
 end
 
 
+function heun3_step(f, x0, tn, Δt, arg...)
+
+    k1 = f(x0, tn, arg...)
+    k2 = f((x0 + (Δt*k1)/3), (tn + Δt/3), arg...)
+    k3 = f((x0 + (2*Δt*k2)/3), (tn + (2*Δt)/3), arg...)
+
+    xn1 = x0 + Δt*(k1 + 3*k3)/4
+    tn1 = tn + Δt
+
+    return [xn1; tn1]
+end
+
+
+function ralston4_step(f, x0, tn, Δt, arg...)
+
+    k1 = f(x0, tn, arg...)
+    k2 = f((x0 + (Δt*k1*0.4)), (tn + (Δt*0.4)), arg...)
+    k3 = f((x0 + Δt*(0.29697761*k1 + 0.15875964*k2)), (tn + Δt*0.45573725), arg...)
+    k4 = f((x0 + Δt*(0.21810040*k1 - 3.05096516*k2 + 3.83286476*k3)), (tn + Δt), arg...)
+    
+
+    xn1 = x0 + Δt*(0.17476028*k1 - 0.55148066*k2 + 1.20553560*k3 + 0.17118468*k4)
+    tn1 = tn + Δt
+
+    return [xn1; tn1]
+end
+
+
 function rk4_step(f, x0, tn, Δt, arg...)
 
     k1 = f(x0, tn, arg...)
@@ -15,6 +43,20 @@ function rk4_step(f, x0, tn, Δt, arg...)
     k4 = f((x0 + Δt*k3), (tn + Δt), arg...)
 
     xn1 = x0 + Δt*(k1 + 2*k2 + 2*k3 + k4)/6
+    tn1 = tn + Δt
+
+    return [xn1; tn1]
+end
+
+
+function three_eight_rule_step(f, x0, tn, Δt, arg...)
+
+    k1 = f(x0, tn, arg...)
+    k2 = f((x0 + (Δt*k1)/3), (tn + Δt/3), arg...)
+    k3 = f((x0 + Δt*((-k1/3) + k2)), (tn + 2*Δt/3), arg...)
+    k4 = f((x0 + Δt*(k1 - k2 + k3)), (tn + Δt), arg...)
+
+    xn1 = x0 + Δt*(k1 + 3*k2 + 3*k3 + k4)/8
     tn1 = tn + Δt
 
     return [xn1; tn1]
