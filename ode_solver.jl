@@ -18,7 +18,6 @@ function euler_step(f, x0, tn, Δt, arg...)
     return [xn1, tn1]
 end
 
-
 function heun3_step(f, x0, tn, Δt, arg...)
 	"""
     Performs a Heun 3 step from t0 to (tn + Δt).
@@ -42,7 +41,6 @@ function heun3_step(f, x0, tn, Δt, arg...)
 
     return [xn1, tn1]
 end
-
 
 function ralston4_step(f, x0, tn, Δt, arg...)
 	"""
@@ -70,7 +68,6 @@ function ralston4_step(f, x0, tn, Δt, arg...)
     return [xn1, tn1]
 end
 
-
 function rk4_step(f, x0, tn, Δt, arg...)
 	"""
     Performs a Runge-Kutta 4 step from t0 to (tn + Δt).
@@ -96,8 +93,7 @@ function rk4_step(f, x0, tn, Δt, arg...)
     return [xn1, tn1]
 end
 
-
-function three_eight_rule_step(f, x0, tn, Δt, arg...)
+function three_eighths_rule_step(f, x0, tn, Δt, arg...)
 	"""
     Performs a 3/8 Rule step from t0 to (tn + Δt).
 
@@ -122,7 +118,6 @@ function three_eight_rule_step(f, x0, tn, Δt, arg...)
     return [xn1, tn1]
 end
 
-
 function solve_to(f, x0, t1, t2, Δt, method, arg...)
 	"""
     Solves ODE from 
@@ -139,7 +134,7 @@ function solve_to(f, x0, t1, t2, Δt, method, arg...)
                 heun3_step
                 ralston4_step
                 rk4_step
-                three_eight_rule_step
+                three_eighths_rule_step
 		arg (list, optional): Arguments to pass to f.
 
 	Returns:
@@ -162,50 +157,50 @@ function solve_to(f, x0, t1, t2, Δt, method, arg...)
     return x
 end
 
-
 function solve_ode(f, x0, t, method=rk4_step, Δt=0.001, arg...)
     """
     Solves a provided ODE, f, along time input t with initia condition(s) x0.
-
-	Parameters:
-		f (function): Function which returns a singular value or 1 x n matrix of values.
+    
+    Parameters:
+        f (function): Function which returns a singular value or 1 x n matrix of values.
         x0 (matrix): Matrix of initial values in the 1 x n form, eg: [1] or [1 1].
-		t (array): Time values to solve between. The first element of t should be the initial value, 0.
-        method (function): method used to approximate solution
-            Allowable methods:
-                euler_step
-                heun3_step
-                ralston4_step
-                rk4_step
-                three_eight_rule_step
-		Δt (float): Step size.
-		arg (list, optional): Arguments to pass to f.
-
-	Returns:
+        t (array): Time values to solve between. The first element of t should be the initial value, 0.
+        method (string): method used to approximate solution
+            Allowable method inputs:
+                euler
+                heun3
+                ralston4
+                rk4
+                three_eighths_rule
+        Δt (float): Step size.
+        arg (list, optional): Arguments to pass to f.
+    
+    Returns:
         x_series: List of solutions for x at each time value in t
-	"""
-
+    """
+    
     # Error handling
-
     if t[1] != 0
         throw(error("Please make sure the first value of the time series is 0."))
     elseif !isa(x0, Array)
         throw(error("Please make sure the initial condition is a 1 x n matrix."))
     end
-
-    allowable_inputs = [euler_step, heun3_step, ralston4_step, rk4_step, three_eight_rule_step]
-
-    if method ∉ allowable_inputs
+    
+    # Check method is allowed
+    allowable_inputs = ["euler", "heun3", "ralston4", "rk4", "three_eighths_rule"]
+    
+    if string(method) ∉ allowable_inputs
         println("Method not assigned, please enter either:
-        euler_step, heun3_step, ralston4_step, rk4_step, or three_eight_rule_step\n")
+        euler, heun3, ralston4, rk4, or three_eighths_rule")
         println("Defaulting to rk4_step.")
         method = rk4_step
     else
-        # println("Method successfully set as ", method)
+        method = string(method,"_step")
+        method = getfield(Main, Symbol(method))
+        println("Method successfully set as ", method)
     end
 
     # Computation
-
     x_series = Matrix{Float64}(undef, 0, length(x0))
     x_series = [x_series; x0]
 
@@ -217,5 +212,3 @@ function solve_ode(f, x0, t, method=rk4_step, Δt=0.001, arg...)
     
     return x_series
 end
-
-
