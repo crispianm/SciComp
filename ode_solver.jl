@@ -164,7 +164,7 @@ function solve_ode(f, x0, t, method=rk4_step, Δt=0.001, arg...)
     Parameters:
         f (function): Function which returns a singular value or 1 x n matrix of values.
         x0 (matrix): Matrix of initial values in the 1 x n form, eg: [1] or [1 1].
-        t (array): Time values to solve between. The first element of t should be the initial value, 0.
+        t (array or range): Time values to solve between. The first element of t should be the initial value, 0.
         method (string): method used to approximate solution
             Allowable method inputs:
                 euler
@@ -188,7 +188,7 @@ function solve_ode(f, x0, t, method=rk4_step, Δt=0.001, arg...)
     
     # Check method is allowed
     allowable_inputs = ["euler", "heun3", "ralston4", "rk4", "three_eighths_rule"]
-    
+
     if string(method) ∉ allowable_inputs
         println("Method not assigned, please enter either:
         euler, heun3, ralston4, rk4, or three_eighths_rule")
@@ -197,7 +197,7 @@ function solve_ode(f, x0, t, method=rk4_step, Δt=0.001, arg...)
     else
         method = string(method,"_step")
         method = getfield(Main, Symbol(method))
-        println("Method successfully set as ", method)
+        # println("Method successfully set as ", method)
     end
 
     # Computation
