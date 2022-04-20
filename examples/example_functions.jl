@@ -1,3 +1,7 @@
+# Various functions and some function solutions
+# are included in tHIS file. (example_functions.jl)
+# 
+
 """
 dx/dt = x
 """
@@ -10,10 +14,10 @@ function f_solution(x, t)
     return exp.(t)
 end
 
+
+
 """
-System of equations definitions for
-    d^2x/dt^2 = -x,
-equivalent to the system of equations
+System of equations definitions for d^2x/dt^2 = -x, equivalent to the system of equations
     dx/dt = y
 and
     dy/dt = -x.
@@ -46,25 +50,27 @@ function f2_solution(u, t)
 end
 
 
+
 """
-Other fun to plot 3d Functions
+Algebraic equation for numerical continuation exercises
 """
 
 function algebraic(x, c, arg...)
 
-    u1, u2 = u
-    du1dt = beta*u1 - u2 + sigma*u1*(u1^2 + u2^2)
-    du2dt = u1 + beta*u2 + sigma*u2*(u1^2 + u2^2)
-
-    return [du1dt du2dt]
+    return x^3 - x + c
 end
 
 
+
 """
-Other fun to plot 3d Functions
+Hopf bifurcation for numerical continuation exercises
 """
 
 function hopf2d(u, t; beta=1, sigma=-1.0, arg...)
+
+    if(!isapprox(length(u), 2.0; atol=eps(Float64), rtol=0))
+        throw(error("Please make sure you have entered two initial conditions for the function."))
+    end
 
     u1, u2 = u
     du1dt = beta*u1 - u2 + sigma*u1*(u1^2 + u2^2)
@@ -74,6 +80,10 @@ function hopf2d(u, t; beta=1, sigma=-1.0, arg...)
 end
 
 function hopf2d_modified(u, t; beta=1, sigma=-1.0, arg...)
+    
+    if(!isapprox(length(u), 2.0; atol=eps(Float64), rtol=0))
+        throw(error("Please make sure you have entered two initial conditions for the function."))
+    end
 
     u1, u2 = u
     du1dt = beta*u1 - u2 - sigma*u1*(u1^2 + u2^2) + sigma*u1*(u1^2 + u2^2)^2
@@ -91,11 +101,16 @@ function hopf2d_sol(t; beta=1, theta=0.0)
 end
 
 
+
 """
-Other fun to plot 3d Functions
+Hopf bifurcation in 3d
 """
 
 function hopf3d(u, t; beta=1, sigma=-1.0, arg...)
+    
+    if(!isapprox(length(u), 3.0; atol=eps(Float64), rtol=0))
+        throw(error("Please make sure you have entered two initial conditions for the function."))
+    end
 
     u1, u2, u3 = u
     du1dt = beta*u1 - u2 + sigma*u1*(u1^2 + u2^2)
@@ -115,8 +130,9 @@ function hopf3d_sol(t; beta=1, theta=0.0, arg...)
 end
 
 
+
 """
-Other fun to plot 3d Functions
+Other 3d Functions (fun to plot)
 """
 
 function cheng_wang(u, t; a=-0.01, arg...)
@@ -132,7 +148,6 @@ function cheng_wang(u, t; a=-0.01, arg...)
 
     return [dxdt dydt dzdt]
 end
-
 
 function lorenz(u, t; beta=(8/3), sigma=10.0, rho=28.0, arg...)
 
