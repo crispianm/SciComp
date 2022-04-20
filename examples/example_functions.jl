@@ -1,6 +1,5 @@
 # Various functions and some function solutions
 # are included in tHIS file. (example_functions.jl)
-# 
 
 """
 dx/dt = x
@@ -124,7 +123,7 @@ function hopf3d_sol(t; beta=1, theta=0.0, arg...)
 
     u1 = √(beta) * cos.(t .+ theta)
     u2 = √(beta) * sin.(t .+ theta)
-    u3 = exp.(-t)
+    u3 = exp.(-t) # correct?
 
     return u1, u2, u3
 end

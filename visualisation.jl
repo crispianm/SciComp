@@ -15,7 +15,7 @@ function plot_ode(ode, u0, t, labels=["t" "x"], arg...)
         arg (list, optional): Arguments to pass to f.
     
     Returns:
-        A plot of the solutions for x and y at each time value in t
+        A plot of the solutions for x and y at each time value in t.
     """
 
     deltat_max = 0.01
@@ -51,7 +51,7 @@ function plot_ode_3d(ode, u0, t, labels=["u1" "u2" "u3"], arg...)
         arg (list, optional): Arguments to pass to f.
     
     Returns:
-        x_series: List of solutions for x at each time value in t
+        A plot of the solutions for x, y, and z at each time value in t.
     """
 
     deltat_max = 0.01
@@ -76,39 +76,38 @@ function plot_ode_3d(ode, u0, t, labels=["u1" "u2" "u3"], arg...)
 end
 
 
-function plot_phase_portrait(ode, u0, t, labels=["x" "y"], arg...)
+function plot_phase_portrait(ode, u0, t, axis_labels=["u1" "u2"], arg...)
 
     """
-    Plots a provided ODE, ode, along time input t with initia condition(s) u0.
+    Plots a 2d phase portrait for a provided ODE, ode, along time input t
+    with initia condition(s) u0.
     
     Parameters:
         ode (function): Function which returns a singular value or 1 x n matrix of values.
         u0 (matrix): Matrix of initial values in the 1 x n form, eg: [1] or [1 1].
         t (array or range): Time values to solve between. The first element of t should be the initial value, 0.
-        labels (array, optional): Labels for the x and y axes.
+        axis_labels (array, optional): Labels for the x and y axes.
         arg (list, optional): Arguments to pass to f.
     
     Returns:
-        x_series: List of solutions for x at each time value in t
+        A 2d plot of the ode's phase portrait.
     """
     
     deltat_max = 0.01
     solution = solve_ode(ode, u0, t, "rk4", deltat_max)
-    x = solution[:,1]
-    y = solution[:,2]
 
     # Create trace
     rk4 = scatter(
-        x=x,
-        y=y,
+        x = solution[:,1],
+        y = solution[:,2],
         mode="lines",
         name="rk4 approximation of ODE",
         showlegend=true
         )
 
     layout = Layout(
-        xaxis_title = labels[1],
-        yaxis_title = labels[2],
+        xaxis_title = axis_labels[1],
+        yaxis_title = axis_labels[2],
         width=700, height=350,
         )
 
@@ -117,28 +116,40 @@ function plot_phase_portrait(ode, u0, t, labels=["x" "y"], arg...)
 end
 
 
-function plot_phase_portrait_3d(ode, u0, t, labels=["u1" "u2" "u3"], arg...)
+function plot_phase_portrait_3d(ode, u0, t, axis_labels=["u1" "u2" "u3"], arg...)
+
+    """
+    Plots a 3d phase portrait for a provided ODE, ode, along time input t
+    with initia condition(s) u0.
+    
+    Parameters:
+        ode (function): Function which returns a singular value or 1 x n matrix of values.
+        u0 (matrix): Matrix of initial values in the 1 x n form, eg: [1] or [1 1].
+        t (array or range): Time values to solve between. The first element of t should be the initial value, 0.
+        axis_labels (array, optional): Labels for the x and y axes.
+        arg (list, optional): Arguments to pass to f.
+    
+    Returns:
+        A 3d plot of the ode's phase portrait.
+    """
 
     deltat_max = 0.01
     solution = solve_ode(ode, u0, t, "rk4", deltat_max)
-    x = solution[:,1]
-    y = solution[:,2]
-    z = solution[:,3]
 
     # Create trace
     rk4 = scatter(
-        x=x,
-        y=y,
-        z=z,
+        x = solution[:,1],
+        y = solution[:,2],
+        z = solution[:,3],
         mode="lines",
         type="scatter3d"
         )
 
     layout = Layout(
         margin=attr(l=0, r=0, b=0, t=0),
-        xaxis_title = labels[1],
-        yaxis_title = labels[2],
-        zaxis_title = labels[3],
+        xaxis_title = axis_labels[1],
+        yaxis_title = axis_labels[2],
+        zaxis_title = axis_labels[3],
         width=700, height=350,
         )
 

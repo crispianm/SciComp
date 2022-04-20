@@ -1,5 +1,5 @@
 using PlotlyJS
-include("ode_solver.jl")
+include("../ode_solver.jl")
 
 function f(x,t)
     return x

@@ -1,5 +1,6 @@
-using PlotlyJS
-using NLsolve
-using ForwardDiff
-using Tests
-using LinearAlgebra
+# also requires ipykernel for running example notebooks
+PlotlyJS
+NLsolve
+ForwardDiff
+Tests
+LinearAlgebra
