@@ -1,4 +1,5 @@
 function euler_step(f, x0, tn, Δt, arg...)
+
 	"""
     Performs a Euler step from t0 to (tn + Δt).
 
@@ -12,6 +13,7 @@ function euler_step(f, x0, tn, Δt, arg...)
 	Returns:
         [xn1, tn1] (vector): List of values after step at time tn1.
 	"""
+
     xn1 = x0 + Δt*f(x0, tn, arg...)
     tn1 = tn + Δt
 
@@ -19,6 +21,7 @@ function euler_step(f, x0, tn, Δt, arg...)
 end
 
 function heun3_step(f, x0, tn, Δt, arg...)
+
 	"""
     Performs a Heun 3 step from t0 to (tn + Δt).
 
@@ -32,6 +35,7 @@ function heun3_step(f, x0, tn, Δt, arg...)
 	Returns:
 		[xn1, tn1] (vector): List of values after step at time tn1.
 	"""
+
     k1 = f(x0, tn, arg...)
     k2 = f((x0 + (Δt*k1)/3), (tn + Δt/3), arg...)
     k3 = f((x0 + (2*Δt*k2)/3), (tn + (2*Δt)/3), arg...)
@@ -43,6 +47,7 @@ function heun3_step(f, x0, tn, Δt, arg...)
 end
 
 function ralston4_step(f, x0, tn, Δt, arg...)
+
 	"""
     Performs a Ralston 4 step from t0 to (tn + Δt).
 
@@ -56,6 +61,7 @@ function ralston4_step(f, x0, tn, Δt, arg...)
 	Returns:
 		[xn1, tn1] (vector): List of values after step at time tn1.
 	"""
+
     k1 = f(x0, tn, arg...)
     k2 = f((x0 + (Δt*k1*0.4)), (tn + (Δt*0.4)), arg...)
     k3 = f((x0 + Δt*(0.29697761*k1 + 0.15875964*k2)), (tn + Δt*0.45573725), arg...)
@@ -69,6 +75,7 @@ function ralston4_step(f, x0, tn, Δt, arg...)
 end
 
 function rk4_step(f, x0, tn, Δt, arg...)
+
 	"""
     Performs a Runge-Kutta 4 step from t0 to (tn + Δt).
 
@@ -82,6 +89,7 @@ function rk4_step(f, x0, tn, Δt, arg...)
 	Returns:
 		[xn1, tn1] (vector): List of values after step at time tn1.
 	"""
+    
     k1 = f(x0, tn, arg...)
     k2 = f((x0 + (Δt*k1)/2), (tn + Δt/2), arg...)
     k3 = f((x0 + (Δt*k2)/2), (tn + Δt/2), arg...)
@@ -94,6 +102,7 @@ function rk4_step(f, x0, tn, Δt, arg...)
 end
 
 function three_eighths_rule_step(f, x0, tn, Δt, arg...)
+
 	"""
     Performs a 3/8 Rule step from t0 to (tn + Δt).
 
@@ -107,6 +116,7 @@ function three_eighths_rule_step(f, x0, tn, Δt, arg...)
 	Returns:
 		[xn1, tn1] (vector): List of values after step at time tn1.
 	"""
+
     k1 = f(x0, tn, arg...)
     k2 = f((x0 + (Δt*k1)/3), (tn + Δt/3), arg...)
     k3 = f((x0 + Δt*((-k1/3) + k2)), (tn + 2*Δt/3), arg...)
@@ -119,6 +129,7 @@ function three_eighths_rule_step(f, x0, tn, Δt, arg...)
 end
 
 function solve_to(f, x0, t1, t2, Δt, method, arg...)
+
 	"""
     Solves ODE from 
 
@@ -140,6 +151,7 @@ function solve_to(f, x0, t1, t2, Δt, method, arg...)
 	Returns:
 		x (matrix): 1 x n estimate of ODE at time t2
 	"""
+
     timesteps = floor((t2 - t1) / Δt)
 
     x = x0
@@ -158,6 +170,7 @@ function solve_to(f, x0, t1, t2, Δt, method, arg...)
 end
 
 function solve_ode(f, x0, t, method=rk4_step, Δt=0.001, arg...)
+
     """
     Solves a provided ODE, f, along time input t with initia condition(s) x0.
     
