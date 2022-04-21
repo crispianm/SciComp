@@ -66,13 +66,13 @@ function find_limit_cycle(f, u0, T; phase_index=0, arg...)
 
     # Error handling
     if !isa(u0, Array)
-        throw(error("Please make sure the initial condition is a 1 x n matrix.\neg: [1] or [1 1]."))
+        error("Please make sure the initial condition is a 1 x n matrix.\neg: [1] or [1 1].")
     elseif size(u0)[1] != 1
-        throw(error("Please make sure the initial condition is a 1 x n matrix.\neg: [1] or [1 1]."))
+        error("Please make sure the initial condition is a 1 x n matrix.\neg: [1] or [1 1].")
     elseif !isa(phase_index, Int)
-        throw(error("Please enter an integer for the phase index."))
+        error("Please enter an integer for the phase index.")
     elseif phase_index < 0
-        throw(error("Please enter a positive integer for the phase index."))
+        error("Please enter a positive integer for the phase index.")
     end
 
     U = [u0 T]

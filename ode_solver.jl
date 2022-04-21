@@ -169,7 +169,7 @@ function solve_to(f, x0, t1, t2, Δt, method, arg...)
     return x
 end
 
-function solve_ode(f, x0, t, method=rk4_step, Δt=0.001, arg...)
+function solve_ode(f, x0, t, method=rk4_step, Δt=0.01, arg...)
 
     """
     Solves a provided ODE, f, along time input t with initia condition(s) x0.
@@ -194,11 +194,11 @@ function solve_ode(f, x0, t, method=rk4_step, Δt=0.001, arg...)
     
     # Error handling
     if t[1] != 0
-        throw(error("Please make sure the first value of the time series is 0."))
+        error("Please make sure the first value of the time series is 0.")
     elseif !isa(x0, Array)
-        throw(error("Please make sure the initial condition is a 1 x n matrix.\neg: [1] or [1 1]."))
+        error("Please make sure the initial condition is a 1 x n matrix.\neg: [1] or [1 1].")
     elseif size(x0)[1] != 1
-        throw(error("Please make sure the initial condition is a 1 x n matrix.\neg: [1] or [1 1]."))
+        error("Please make sure the initial condition is a 1 x n matrix.\neg: [1] or [1 1].")
     end
     
     # Check method is allowed

@@ -8,14 +8,19 @@ dx/dt = x
 function f(u, t)
 
     if length(u) != 1
-        throw(error("Please enter two initial conditions for the function."))
+        error("Please enter one initial condition for the function.")
     end
 
     return u
 end
 
 function f_solution(u, t)
-    return exp.(t)
+
+    if length(u) != 1
+        error("Please enter one initial condition for the function.")
+    end
+
+    return u*exp.(t)
 end
 
 
@@ -30,7 +35,7 @@ and
 function f2(u, t)
 
     if length(u) != 2
-        throw(error("Please enter two initial conditions for the function."))
+        error("Please enter two initial conditions for the function.")
     end
 
     x = u[1]    
@@ -73,7 +78,7 @@ Hopf bifurcation for numerical continuation exercises
 function hopf2d(u, t; beta=1, sigma=-1.0, arg...)
 
     if length(u) != 2
-        throw(error("Please enter two initial conditions for the function."))
+        error("Please enter two initial conditions for the function.")
     end
 
     u1, u2 = u
@@ -86,7 +91,7 @@ end
 function hopf2d_modified(u, t; beta=1, sigma=-1.0, arg...)
     
     if length(u) != 2
-        throw(error("Please enter two initial conditions for the function."))
+        error("Please enter two initial conditions for the function.")
     end
 
     u1, u2 = u
@@ -113,7 +118,7 @@ Hopf bifurcation in 3d
 function hopf3d(u, t; beta=1, sigma=-1.0, arg...)
     
     if length(u) != 3
-        throw(error("Please enter two initial conditions for the function."))
+        error("Please enter three initial conditions for the function.")
     end
 
     u1, u2, u3 = u

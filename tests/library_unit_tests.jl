@@ -6,41 +6,83 @@ include("../examples/example_functions.jl")
 include("../visualisation.jl")
 
 
-"""
-Test script to run the ODE solver for a variety of differential equations and check them against explicit solutions.
+#  Test script to run the ODE solver for a variety of differential equations
+#  and check them against explicit solutions.
+ 
+#  Set the save_figures and save_figures_3d variables to true
+#  to save pngs in the output folder.
 
 
-Set the save_figures and save_figures_3d variables to true to save pngs in the output folder.
-"""
-save_figures = true
-save_figures_3d = true
+save_figures = false
+save_figures_3d = false
 
 
 """
 Run the tests!
 """
 
+@testset verbose = true "Systems Tests" begin
+
+    @testset verbose = true "Week 3 - ode_solver" begin
+
+        @testset verbose = true "Input Tests" begin
+
+            # test error is thrown if t=0 is not included in t
+            t = 0:0.1:1
+            bad_t = 1:0.1:2
+            @test_throws ErrorException solve_ode(f2, [1], bad_t, "rk4")
 
 
-# x0 = [1]
-# t = [0, 1]
+            # test error is thrown if x0 is not a matrix
+            @test_throws ErrorException solve_ode(f2, 1, t, "rk4")
+            @test_throws ErrorException solve_ode(f2, [1;0], t, "rk4")
+            @test_throws ErrorException solve_ode(f2, [1, 0], t, "rk4")
 
-# estimate = solve_ode(f, x0, t, "rk4", 0.001)[end][1]
+            # test error is thrown if x0 is not correct length
+            @test_throws ErrorException solve_ode(f2, [1], t, "rk4")
 
-# @testset "Systems Tests" begin
+        end
 
-#     @testset "Hopf Week 17" begin
-#         @test foo("cat") == 9
-#         @test foo("dog") == foo("cat")
-#     end
+        @testset verbose = true "Output Tests" begin
 
-#     @testset "Arrays $i" for i in 1:3
-#         @test foo(zeros(i)) == i^2
-#         @test foo(ones(i)) == i^2
-#     end
+            # test if solve_ode estimates a simple ODE correctly
+            x0 = [1]
+            t = 0:1
+            e_estimate = solve_ode(f, x0, t, "rk4")[end][1]
+            @test isapprox(e_estimate, ℯ)
 
-# end
 
+            # test if solve_ode estimates systems of ODEs correctly
+            x0 = [1 0]
+            t = 0:0.1:1
+            f2_sol = f2_solution(x0, t)
+            f2_numerical_sol = solve_ode(f2, x0, t, "rk4")
+            @test  all(isapprox.(f2_numerical_sol, f2_sol, atol=1e-6))
+
+        end
+            
+
+    end
+
+    @testset verbose = true "Week 17 - Hopf numerical_shooting" begin
+
+        # test if found limit cycle matches the analytical solution
+        u0, T = find_limit_cycle(hopf2d, [-1 0], 6)
+        @test isapprox(T, 2*pi)
+
+
+        # test if solve_ode estimates a Hopf ODE correctly
+        t = 0:0.1:T
+        hopf_solution = hopf2d_sol(t, beta=1, theta=pi) # adjusted for phase
+        hopf_numerical_sol = solve_ode(hopf2d, u0, t, "rk4")
+        @test  all(isapprox.(hopf_numerical_sol, hopf_solution, atol=1e-6))
+
+
+
+
+
+    end
+end
 
 
 
@@ -70,9 +112,6 @@ if save_figures
     ## Plot ODE analytic and numerical solutions to see if they match
     # Find limit cycle
     u0, T = find_limit_cycle(hopf2d, [-1 0], 6.28)
-    println("u0: ", u0)
-    println("Period: ", T)
-
     t = 0:0.01:T
     hopf_solution = hopf2d_sol(t, beta=1, theta=pi)
 
