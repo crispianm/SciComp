@@ -101,7 +101,7 @@ function plot_phase_portrait(ode, u0, t, axis_labels=["u1" "u2"], arg...)
         x = solution[:,1],
         y = solution[:,2],
         mode="lines",
-        name="rk4 approximation of ODE",
+        name="Phase portrait of ODE",
         showlegend=true
         )
 

@@ -2,5 +2,5 @@
 PlotlyJS
 NLsolve
 ForwardDiff
-Tests
+Test
 LinearAlgebra

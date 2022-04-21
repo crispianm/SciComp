@@ -26,7 +26,7 @@ end
 function shoot(f, u; phase_index=0, arg...)
 
     """
-    Function returns the array to be solved for roots in find_limit_cycle.
+    Defines the system to be solved using in find_limit_cycle.
 
         Parameters:
             f (function): Function which returns a singular value or 1 x n matrix of values.
@@ -35,16 +35,16 @@ function shoot(f, u; phase_index=0, arg...)
             arg (list, optional): Arguments to pass to f.
 
         Returns:
-            an array of u0-solution and the phase condition. This will make up a system of equations to be solved.
+            A matrix of G's estimate and the phase condition.
     """
 
     u0 = u[:, 1:end .!= end]
     T = u[end]
     
-    G_est = G(f, u0, 0, T; arg...)
+    G_estimate = G(f, u0, 0, T; arg...)
     phase_condition = f(u0, 0; arg...)[phase_index+1]
     
-    return [G_est phase_condition]
+    return [G_estimate phase_condition]
 end
 
 
