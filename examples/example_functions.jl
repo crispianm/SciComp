@@ -1,5 +1,4 @@
-# Various functions and some function solutions
-# are included in tHIS file. (example_functions.jl)
+# Various ODE functions and their solutions are included in this file.
 
 """
 dx/dt = x
@@ -8,7 +7,7 @@ dx/dt = x
 function f(u, t)
 
     if length(u) != 1
-        error("Please enter one initial condition for the function.")
+        error("Please enter only one initial condition for the function.")
     end
 
     return u
@@ -17,7 +16,7 @@ end
 function f_solution(u, t)
 
     if length(u) != 1
-        error("Please enter one initial condition for the function.")
+        error("Please enter only one initial condition for the function.")
     end
 
     return u*exp.(t)
@@ -141,7 +140,7 @@ end
 
 
 """
-Other 3d Functions (fun to plot)
+Other Functions (fun to plot)
 """
 
 function cheng_wang(u, t; a=-0.01, arg...)
@@ -170,4 +169,17 @@ function lorenz(u, t; beta=(8/3), sigma=10.0, rho=28.0, arg...)
     dzdt = x*y - beta*z
 
     return [dxdt dydt dzdt]
+end
+
+function van_der_pol(u, t; μ=1, arg...)
+
+    """
+    Good initial condition: [1 0 1]
+    """
+
+    x, y = u
+    dxdt = y
+    dydt = μ*(1 - x^2)*y - x
+
+    return [dxdt dydt]
 end

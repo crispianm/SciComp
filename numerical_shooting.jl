@@ -17,7 +17,7 @@ function G(f, u0, t0, T; arg...)
             u0 minus the solution of ODE f.
     """
 
-    F = solve_ode(f, u0, [t0 T], "rk4", 0.01; arg...)
+    F = solve_ode(f, u0, [t0 T], arg...)
     g = u0 .- F[[end], :]
     
     return g

@@ -18,8 +18,7 @@ function plot_ode(ode, u0, t, labels=["t" "x"], arg...)
         A plot of the solutions for x and y at each time value in t.
     """
 
-    deltat_max = 0.01
-    solution = solve_ode(ode, u0, t, "rk4", deltat_max)
+    solution = solve_ode(ode, u0, t, arg...)
     x = solution[:,1]
     y = solution[:,2]
 
@@ -54,8 +53,7 @@ function plot_ode_3d(ode, u0, t, labels=["u1" "u2" "u3"], arg...)
         A plot of the solutions for x, y, and z at each time value in t.
     """
 
-    deltat_max = 0.01
-    solution = solve_ode(ode, u0, t, "rk4", deltat_max)
+    solution = solve_ode(ode, u0, t, arg...)
     x = solution[:,1]
     y = solution[:,2]
     z = solution[:,3]
@@ -92,9 +90,8 @@ function plot_phase_portrait(ode, u0, t, axis_labels=["u1" "u2"], arg...)
     Returns:
         A 2d plot of the ode's phase portrait.
     """
-    
-    deltat_max = 0.01
-    solution = solve_ode(ode, u0, t, "rk4", deltat_max)
+    println(arg)
+    solution = solve_ode(ode, u0, t, arg...)
 
     # Create trace
     rk4 = scatter(
@@ -133,8 +130,7 @@ function plot_phase_portrait_3d(ode, u0, t, axis_labels=["u1" "u2" "u3"], arg...
         A 3d plot of the ode's phase portrait.
     """
 
-    deltat_max = 0.01
-    solution = solve_ode(ode, u0, t, "rk4", deltat_max)
+    solution = solve_ode(ode, u0, t)
 
     # Create trace
     rk4 = scatter(
