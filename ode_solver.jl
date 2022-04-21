@@ -196,7 +196,9 @@ function solve_ode(f, x0, t, method=rk4_step, Δt=0.001, arg...)
     if t[1] != 0
         throw(error("Please make sure the first value of the time series is 0."))
     elseif !isa(x0, Array)
-        throw(error("Please make sure the initial condition is a 1 x n matrix."))
+        throw(error("Please make sure the initial condition is a 1 x n matrix.\neg: [1] or [1 1]."))
+    elseif size(x0)[1] != 1
+        throw(error("Please make sure the initial condition is a 1 x n matrix.\neg: [1] or [1 1]."))
     end
     
     # Check method is allowed
