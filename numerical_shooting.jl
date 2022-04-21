@@ -17,7 +17,7 @@ function G(f, u0, t0, T; arg...)
             u0 minus the solution of ODE f.
     """
 
-    F = solve_ode(f, u0, [t0 T], arg...)
+    F = solve_ode(f, u0, [t0 T]; arg...)
     g = u0 .- F[[end], :]
     
     return g
@@ -78,7 +78,7 @@ function find_limit_cycle(f, u0, T; phase_index=0, arg...)
     U = [u0 T]
     U = [Float64(number) for number in U] # convert ints to floats for use in nlsolve
 
-    solution = nlsolve((u) -> shoot(f, u; phase_index), U).zero
+    solution = nlsolve((u) -> shoot(f, u; phase_index, arg...), U).zero
 
     u01 = solution[:, 1:end-1]
     T1 = solution[end]

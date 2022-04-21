@@ -48,11 +48,10 @@ end
 
 function f2_solution(u, t)
 
-    c1 = u[2]
-    c2 = u[1]
+    c1,c2 = u
 
-    x = c1*sin.(t) + c2*cos.(t)
-    y = c1*cos.(t) - c2*sin.(t)
+    x = c1*cos.(t) + c2*sin.(t)
+    y = c2*cos.(t) - c1*sin.(t)
 
     return [x y]
 end
@@ -128,13 +127,15 @@ function hopf3d(u, t; beta=1, sigma=-1.0, arg...)
     return [du1dt du2dt du3dt]
 end
 
-function hopf3d_sol(t; beta=1, theta=0.0, arg...)
+function hopf3d_sol(u, t; beta=1, theta=0.0, arg...)
+
+    c1,c2,c3 = u
 
     u1 = √(beta) * cos.(t .+ theta)
     u2 = √(beta) * sin.(t .+ theta)
-    u3 = exp.(-t) # correct?
+    u3 = c3*exp.(-t) # correct?
 
-    return u1, u2, u3
+    return [u1 u2 u3]
 end
 
 
@@ -174,7 +175,7 @@ end
 function van_der_pol(u, t; μ=1, arg...)
 
     """
-    Good initial condition: [1 0 1]
+    Good initial condition: [2 0]
     """
 
     x, y = u

@@ -18,7 +18,7 @@ function plot_ode(ode, u0, t, labels=["t" "x"], arg...)
         A plot of the solutions for x and y at each time value in t.
     """
 
-    solution = solve_ode(ode, u0, t, arg...)
+    solution = solve_ode(ode, u0, t; arg...)
     x = solution[:,1]
     y = solution[:,2]
 
@@ -37,7 +37,7 @@ function plot_ode(ode, u0, t, labels=["t" "x"], arg...)
 end
 
 
-function plot_ode_3d(ode, u0, t, labels=["u1" "u2" "u3"], arg...)
+function plot_ode_3d(ode, u0, t, labels=["u1" "u2" "u3"]; arg...)
 
     """
     Plots a provided ODE, ode, in 3d along time input t with initia condition(s) u0.
@@ -91,7 +91,7 @@ function plot_phase_portrait(ode, u0, t, axis_labels=["u1" "u2"], arg...)
         A 2d plot of the ode's phase portrait.
     """
     println(arg)
-    solution = solve_ode(ode, u0, t, arg...)
+    solution = solve_ode(ode, u0, t; arg...)
 
     # Create trace
     rk4 = scatter(
@@ -130,7 +130,7 @@ function plot_phase_portrait_3d(ode, u0, t, axis_labels=["u1" "u2" "u3"], arg...
         A 3d plot of the ode's phase portrait.
     """
 
-    solution = solve_ode(ode, u0, t)
+    solution = solve_ode(ode, u0, t; arg...)
 
     # Create trace
     rk4 = scatter(
