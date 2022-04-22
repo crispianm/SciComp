@@ -61,7 +61,7 @@ function find_limit_cycle(f, u0, T; phase_index=0, arg...)
         arg (list, optional): Arguments to pass to f.
     
     Returns:
-        u01, T1, the initial conditions and period of the limit cycle.
+        found_u0, found_T, the initial conditions and period of the limit cycle.
     """
 
     # Error handling
@@ -73,6 +73,8 @@ function find_limit_cycle(f, u0, T; phase_index=0, arg...)
         error("Please enter an integer for the phase index.")
     elseif phase_index < 0
         error("Please enter a positive integer for the phase index.")
+    elseif typeof(T) ∉ (Float64, Int)
+        error("Please enter a single integer or float for the period.")
     end
 
     U = [u0 T]
@@ -80,8 +82,8 @@ function find_limit_cycle(f, u0, T; phase_index=0, arg...)
 
     solution = nlsolve((u) -> shoot(f, u; phase_index, arg...), U).zero
 
-    u01 = solution[:, 1:end-1]
-    T1 = solution[end]
+    found_u0 = solution[:, 1:end-1]
+    found_T = solution[end]
 
-    return u01, T1
+    return found_u0, found_T
 end

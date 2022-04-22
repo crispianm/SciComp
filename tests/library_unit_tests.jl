@@ -21,9 +21,9 @@ save_figures_3d = false
 Run the tests!
 """
 
-@testset verbose = true "Systems Tests" begin
+@testset verbose = true "System Unit Tests" begin
 
-    @testset verbose = true "Week 3 - ode_solver" begin
+    @testset verbose = true "ode_solver" begin
 
         @testset verbose = true "Input Tests" begin
 
@@ -48,7 +48,7 @@ Run the tests!
 
         end
 
-        @testset verbose = true "Input Tests" begin
+        @testset verbose = true "Output Tests" begin
 
             # test if solve_ode estimates a simple ODE correctly
             x0 = [1]
@@ -67,49 +67,101 @@ Run the tests!
         end
     end
 
-    @testset verbose = true "Week 17 - Hopf numerical_shooting" begin
+    @testset verbose = true "numerical_shooting" begin
 
-        # test if found limit cycle matches the analytical solution
-        u0, T = find_limit_cycle(hopf2d, [-1 0], 6)
-        @test isapprox(T, 2*pi)
+        @testset verbose = true "Input Tests" begin
+
+            # test error is thrown if T is not an integer or float
+            T = 10
+            bad_T = 1:0.1:2
+            @test_throws ErrorException find_limit_cycle(f2, [1], bad_T)
+        
+        
+            # test error is thrown if u0 is not a matrix
+            @test_throws ErrorException find_limit_cycle(f2, 1, T)
+            @test_throws ErrorException find_limit_cycle(f2, [1;0], T)
+            @test_throws ErrorException find_limit_cycle(f2, [1, 0], T)
+        
+        
+            # test error is thrown if u0 is not a 1xn matrix
+            @test_throws ErrorException find_limit_cycle(f2, [1 2; 3 4], T)
+        
+        
+            # test error is thrown if u0 is not correct length
+            @test_throws ErrorException find_limit_cycle(f2, [1], 10)
+        
+        
+            # test error is thrown if phase_index is a positive integer
+            @test_throws ErrorException find_limit_cycle(f2, [1 1], 10, phase_index=-1)
+            @test_throws ErrorException find_limit_cycle(f2, [1 1], 10, phase_index=[3])
+            @test_throws ErrorException find_limit_cycle(f2, [1 1], 10, phase_index=2.5)
+            @test_throws ErrorException find_limit_cycle(f2, [1 1], 10, phase_index="0")
+        
+        end
+
+        @testset verbose = true "Output Tests" begin
+
+            # test if found limit cycle matches the analytical solution
+            u0, T = find_limit_cycle(hopf2d, [-1 0], 6)
+            @test isapprox(T, 2*pi)
 
 
-        # test if solve_ode estimates a Hopf ODE correctly
-        t = 0:0.1:T
-        hopf_solution = hopf2d_sol(t, beta=1, theta=pi) # adjusted for phase
-        hopf_numerical_sol = solve_ode(hopf2d, u0, t, method="rk4")
-        @test  all(isapprox.(hopf_numerical_sol, hopf_solution, atol=1e-6))
+            # test if solve_ode estimates a Hopf ODE correctly
+            t = 0:0.1:T
+            hopf_solution = hopf2d_sol(t, beta=1, theta=pi) # adjusted for phase
+            hopf_numerical_sol = solve_ode(hopf2d, u0, t, method="rk4")
+            @test  all(isapprox.(hopf_numerical_sol, hopf_solution, atol=1e-6))
 
 
-        # test if arguments are being passed to the function correctly
-        u0_0, T = find_limit_cycle(hopf2d, [-1 0], 6)
-        u0_1, T = find_limit_cycle(hopf2d, [-1 0], 6, beta = 2)
-        u0_3, T = find_limit_cycle(hopf2d, [-1 0], 6, beta = 2, sigma=-1.2)
-        u0_2, T = find_limit_cycle(hopf2d, [-1 0], 6, sigma=-1.2)
-        @test u0_0 != u0_1
-        @test u0_0 != u0_2
-        @test u0_0 != u0_3
+            # test if arguments are being passed to the function correctly
+            u0_0, T = find_limit_cycle(hopf2d, [-1 0], 6)
+            u0_1, T = find_limit_cycle(hopf2d, [-1 0], 6, beta = 2)
+            u0_3, T = find_limit_cycle(hopf2d, [-1 0], 6, beta = 2, sigma=-1.2)
+            u0_2, T = find_limit_cycle(hopf2d, [-1 0], 6, sigma=-1.2)
+            @test u0_0 != u0_1
+            @test u0_0 != u0_2
+            @test u0_0 != u0_3
 
-        @testset verbose = true "Different dimensions" begin
+        end
 
-
+        @testset verbose = true "Higher Dimensional Output" begin
 
             # test if found limit cycle matches the analytical solution
             u0, T = find_limit_cycle(hopf3d, [1 1 1], 6)
             @test isapprox(T, 2*pi)
 
 
-
-            x0 = [1 1 1]
-            u0, T = find_limit_cycle(hopf3d, x0, 10)
-            hopf_solution = hopf3d_sol(u0, t; theta=0) # adjusted for phase
-            hopf_numerical_sol = solve_ode(hopf3d, u0, t, method="rk4")
+            u0, T = find_limit_cycle(hopf3d, [1 1 1], 10)
+            hopf_solution = hopf3d_sol(u0, 0:0.1:T; theta=0) # adjusted for phase
+            hopf_numerical_sol = solve_ode(hopf3d, u0, 0:0.1:T, method="rk4")
             @test all(isapprox.(hopf_numerical_sol, hopf_solution, atol=1e-5))
             
 
         end
     end
+
+    @testset verbose = true "finite_difference" begin
+
+        @testset verbose = true "Input Tests" begin
+
+            # test error is thrown if t=0 is not included in t
+            t = 0:0.1:1
+            bad_t = 1:0.1:2
+            @test_throws ErrorException solve_ode(f2, [1], bad_t, method="rk4")
+
+        end
+
+        @testset verbose = true "Output Tests" begin
+            
+            # test if found limit cycle matches the analytical solution
+            u0, T = find_limit_cycle(hopf2d, [-1 0], 6)
+            @test isapprox(T, 2*pi)
+
+        end
+    end
 end
+
+
 
 
 
@@ -143,7 +195,7 @@ if save_figures
     hopf_solution = hopf2d_sol(t, beta=1, theta=pi)
 
     # Numerical solution
-    numerical_sol = solve_ode(hopf2d, u0, t, "rk4")
+    numerical_sol = solve_ode(hopf2d, u0, t)
 
     x_plot = scatter(
         x=t, y=numerical_sol[:,1],
