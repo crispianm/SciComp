@@ -4,16 +4,16 @@ function np_continuation(f, x0, T, parameter, par_values; discretisation, arg...
     Attempts to find a function's solution for each parameter value using the last found solution as an initial guess.
     First solution is found using the inputted initial conditions, x0.
 
-    Parameters:
-        f (function): Function which returns a singular value or 1 x n matrix of values.
-            The parameter 
-        x0 (matrix): Matrix of initial values in the 1 x n form, eg: [1] or [1 1].
-        T (float): Initial guess for the period.
-        parameter (string): The parameter in the system to vary.
-            Allowable method inputs: a, alpha, b, beta, c, d, delta, sigma
-        par_values (range): Parameter values to solve between, made with colons, eg: 0:0.1:2.
-        discretisation (string): The discretisation to use, either "shooting" or "none."
-        arg (list, optional): Arguments to pass to f.
+        Parameters:
+            f (function): Function which returns a singular value or 1 x n matrix of values.
+                The parameter 
+            x0 (matrix): Matrix of initial values in the 1 x n form, eg: [1] or [1 1].
+            T (float): Initial guess for the period.
+            parameter (string): The parameter in the system to vary.
+                Allowable method inputs: a, alpha, b, beta, c, d, delta, sigma
+            par_values (range): Parameter values to solve between, made with colons, eg: 0:0.1:2.
+            discretisation (string): The discretisation to use, either "shooting" or "none."
+            arg (list, optional): Arguments to pass to f.
 
         Returns:
             par_values, conditions: the parameter values and corresponding solutions.
@@ -21,6 +21,40 @@ function np_continuation(f, x0, T, parameter, par_values; discretisation, arg...
         Example Usage:
             np_continuation(hopf2d, [1 1], 6, "beta", 0:0.01:2, discretisation="shooting")
     """
+
+    ## Error handling
+    if !isa(x0, Array)
+        error("Please make sure the initial condition is a 1 x n matrix.\neg: [1] or [1 1].")
+    elseif size(x0)[1] != 1
+        error("Please make sure the initial condition is a 1 x n matrix.\neg: [1] or [1 1].")
+    elseif !isa(parameter, String)
+        error("Please enter a string for the phase index.")
+    elseif !isa(discretisation, String)
+        error("Please enter a string for the discretisation.")
+    elseif typeof(T) ∉ (Float64, Int)
+        error("Please enter a single integer or float for the period.")
+    end
+
+    # Check par_values is a range.
+    try 
+        step(par_values);
+    catch 
+        error("Please enter a range for the parameter values.")
+    end
+
+    # Check parameter is allowed
+    allowable_parameters = ["a", "b", "c", "d", "alpha", "beta", "delta", "sigma"]
+    if string(parameter) ∉ allowable_parameters
+        error("Parameter not assigned, please enter either:
+        a, b, c, d, alpha, beta, delta, or sigma")
+    end
+
+    # Check discretisation method is allowed
+    allowable_parameters = ["shooting", "none"]
+    if string(discretisation) ∉ allowable_parameters
+        error("Discretisation not assigned, please enter either:
+        shooting or none.")
+    end
 
     # convert ints to floats for use in nlsolve
     x0 = [x0 T]
@@ -72,7 +106,7 @@ function np_continuation(f, x0, T, parameter, par_values; discretisation, arg...
     end
 
 
-    # Computation
+    ## Computation
     conditions = nlsolve((u) -> discretisation(u, par_values[1]), x0).zero
     for parameter in par_values[2:end]
         # solve using previous initial condition
@@ -108,8 +142,7 @@ end
 function pseudo_arclength(f, x0, T, parameter, par_values; discretisation="shooting", arg...)
 
     """
-    Attempts to find a function's solution for each parameter value using the last found solution as an initial guess.
-    First solution is found using the inputted initial conditions, x0.
+    Attempts to find a function's solution using the pseudo arclength method
 
         Parameters:
             f (function): Function which returns a singular value or 1 x n matrix of values.
@@ -126,8 +159,42 @@ function pseudo_arclength(f, x0, T, parameter, par_values; discretisation="shoot
             new_par_values, conditions: the parameter values and corresponding solutions.
 
         Example Usage:
-        pseudo_arclength(hopf2d, [1 1], 6, "beta", 0:0.01:2, discretisation="shooting")
+            pseudo_arclength(hopf2d, [1 1], 6, "beta", 0:0.01:2, discretisation="shooting")
     """
+
+    ## Error handling
+    if !isa(x0, Array)
+        error("Please make sure the initial condition is a 1 x n matrix.\neg: [1] or [1 1].")
+    elseif size(x0)[1] != 1
+        error("Please make sure the initial condition is a 1 x n matrix.\neg: [1] or [1 1].")
+    elseif !isa(parameter, String)
+        error("Please enter a string for the phase index.")
+    elseif !isa(discretisation, String)
+        error("Please enter a string for the discretisation.")
+    elseif typeof(T) ∉ (Float64, Int)
+        error("Please enter a single integer or float for the period.")
+    end
+
+    # Check par_values is a range.
+    try 
+        step(par_values);
+    catch 
+        error("Please enter a range for the parameter values.")
+    end
+
+    # Check parameter is allowed
+    allowable_parameters = ["a", "b", "c", "d", "alpha", "beta", "delta", "sigma"]
+    if string(parameter) ∉ allowable_parameters
+        error("Parameter not assigned, please enter either:
+        a, b, c, d, alpha, beta, delta, or sigma")
+    end
+
+    # Check discretisation method is allowed
+    allowable_parameters = ["shooting", "none"]
+    if string(discretisation) ∉ allowable_parameters
+        error("Discretisation not assigned, please enter either:
+        shooting or none.")
+    end
 
     # convert ints to floats for use in nlsolve
     x0 = [x0 T]
@@ -174,6 +241,9 @@ function pseudo_arclength(f, x0, T, parameter, par_values; discretisation="shoot
         error("Invalid discretisation.")
     end
 
+
+    ## Computation
+
     # Create a list of new parameter values to try
     new_par_values = [par_values[1]; par_values[2]]
 
@@ -188,7 +258,6 @@ function pseudo_arclength(f, x0, T, parameter, par_values; discretisation="shoot
     conditions = nlsolve((u) -> discretisation(u, par_values[1]), x0).zero
     conditions = [conditions; nlsolve((u) -> discretisation(u, new_par_values[2]), conditions).zero]
    
-    # Computation
     i = 1
     while end_function(new_par_values[end])
 

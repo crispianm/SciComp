@@ -1,9 +1,11 @@
 using PlotlyJS
 using Test
 include("../ode_solver.jl")
+include("../numerical_continuation.jl")
 include("../numerical_shooting.jl")
 include("../examples/example_functions.jl")
 include("../visualisation.jl")
+include("../finite_difference.jl")
 
 
 #  Test script to run the ODE solver for a variety of differential equations

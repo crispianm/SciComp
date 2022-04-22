@@ -36,6 +36,9 @@ function shoot(f, u; phase_index=0, arg...)
 
         Returns:
             A matrix of G's estimate and the phase condition.
+
+        Example Usage:
+            shoot(hopf2d, [1 1 20], phase_index = 0)
     """
 
     u0 = u[:, 1:end .!= end]
@@ -53,15 +56,18 @@ function find_limit_cycle(f, u0, T; phase_index=0, arg...)
     """
     Finds u0 and T such that the phase condition of f is satisfied.
         
-    Parameters:
-        f (function): Function which returns a singular value or 1 x n matrix of values.
-        u0 (matrix): Initial guess for the initial conditions in the 1 x n form, eg: [1] or [1 1].
-        T (float): Initial guess for the period.
-        phase_index (int, optional): Variable for the phase condition, eg: d/dt(phase_index) = 0
-        arg (list, optional): Arguments to pass to f.
-    
-    Returns:
-        found_u0, found_T, the initial conditions and period of the limit cycle.
+        Parameters:
+            f (function): Function which returns a singular value or 1 x n matrix of values.
+            u0 (matrix): Initial guess for the initial conditions in the 1 x n form, eg: [1] or [1 1].
+            T (float): Initial guess for the period.
+            phase_index (int, optional): Variable for the phase condition, eg: d/dt(phase_index) = 0
+            arg (list, optional): Arguments to pass to f.
+        
+        Returns:
+            found_u0, found_T, the initial conditions and period of the limit cycle.
+
+        Example usage:
+            find_limit_cycle(hopf2d, [-1 0], 20, phase_index = 0)
     """
 
     # Error handling
