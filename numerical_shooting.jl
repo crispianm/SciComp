@@ -56,7 +56,7 @@ function find_limit_cycle(f, u0, T; phase_index=0, arg...)
     Parameters:
         f (function): Function which returns a singular value or 1 x n matrix of values.
         u0 (matrix): Initial guess for the initial conditions in the 1 x n form, eg: [1] or [1 1].
-        T (float): Initial guess for the period
+        T (float): Initial guess for the period.
         phase_index (int, optional): Variable for the phase condition, eg: d/dt(phase_index) = 0
         arg (list, optional): Arguments to pass to f.
     
