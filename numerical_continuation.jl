@@ -21,16 +21,16 @@ function pseudo_arclength_eq(secant, v, v_pred)
 end
 
 
-function continuation(f, x0, T, parameter, par_values; method="pseudo_arclength", discretisation="shooting", arg...)
+function continuation(f, u0, T, parameter, par_values; method="pseudo_arclength", discretisation="shooting", arg...)
     
     """
     Attempts to find a function's solution for each parameter value using the last found solution as an initial guess.
-    First solution is found using the inputted initial conditions, x0.
+    First solution is found using the inputted initial conditions, u0.
 
         Parameters:
             f (function): Function which returns a singular value or 1 x n matrix of values.
                 The parameter 
-            x0 (matrix): Matrix of initial values in the 1 x n form, eg: [1] or [1 1].
+            u0 (matrix): Matrix of initial values in the 1 x n form, eg: [1] or [1 1].
             T (float): Initial guess for the period.
             parameter (string): The parameter in the system to vary.
                 Allowable method inputs: a, alpha, b, beta, c, d, delta, sigma
@@ -49,9 +49,9 @@ function continuation(f, x0, T, parameter, par_values; method="pseudo_arclength"
     """
 
     ## Error handling
-    if !isa(x0, Array)
+    if !isa(u0, Array)
         error("Please make sure the initial condition is a 1 x n matrix.\neg: [1] or [1 1].")
-    elseif size(x0)[1] != 1
+    elseif size(u0)[1] != 1
         error("Please make sure the initial condition is a 1 x n matrix.\neg: [1] or [1 1].")
     elseif !isa(parameter, String)
         error("Please enter a string for the phase index.")
@@ -78,22 +78,23 @@ function continuation(f, x0, T, parameter, par_values; method="pseudo_arclength"
     end
 
     # Check discretisation method is allowed
-    allowable_parameters = ["shooting", "none"]
-    if string(discretisation) ∉ allowable_parameters
+    allowable_discretisations = ["shooting", "none"]
+    if string(discretisation) ∉ allowable_discretisations
         error("Discretisation not assigned, please enter either:
         shooting or none.")
     end
 
     # Check method is allowed
-    allowable_parameters = ["pseudo_arclength", "natural_parameter_continuation"]
-    if string(method) ∉ allowable_parameters
+    allowable_methods = ["pseudo_arclength", "natural_parameter_continuation"]
+    if string(method) ∉ allowable_methods
         error("Method not assigned, please enter either:
         pseudo_arclength or natural_parameter_continuation.")
     end
 
-    # convert ints to floats for use in nlsolve
-    x0 = [x0 T]
-    x0 = [Float64(number) for number in x0] 
+    # convert any potential ints to floats for use in nlsolve
+    u0 = [u0 T]
+    u0 = [Float64(number) for number in u0] 
+    par_values = [Float64(value) for value in par_values] 
     
     # Handle parameter and discretisation assignment
     if discretisation == "shooting"
@@ -146,7 +147,7 @@ function continuation(f, x0, T, parameter, par_values; method="pseudo_arclength"
     if method == "natural_parameter_continuation"
 
         new_par_values = par_values
-        conditions = nlsolve((u) -> discretisation(u, new_par_values[1]), x0).zero
+        conditions = nlsolve((u) -> discretisation(u, new_par_values[1]), u0).zero
         for parameter in new_par_values[2:end]
             # Solve using previous initial condition
             x = nlsolve((u) -> discretisation(u, parameter), conditions[[end],:]).zero
@@ -166,7 +167,7 @@ function continuation(f, x0, T, parameter, par_values; method="pseudo_arclength"
         end
 
         # Use the first solution as an initial guess for the next
-        conditions = nlsolve((u) -> discretisation(u, par_values[1]), x0).zero
+        conditions = nlsolve((u) -> discretisation(u, par_values[1]), u0).zero
         conditions = [conditions; nlsolve((u) -> discretisation(u, new_par_values[2]), conditions).zero]
     
         i = 1

@@ -138,7 +138,68 @@ Run the tests!
             hopf_numerical_sol = solve_ode(hopf3d, u0, 0:0.1:T, method="rk4")
             @test all(isapprox.(hopf_numerical_sol, hopf_solution, atol=1e-5))
             
+        end
+    end
 
+    @testset verbose = true "numerical_continuation" begin
+
+        @testset verbose = true "Input Tests" begin
+    
+            # test error is thrown if T is not an integer or float
+            T = 10
+            bad_T = 1:0.1:2
+            @test_throws ErrorException continuation(hopf2d, [1 1], bad_T, "beta", 0:0.01:2)
+        
+        
+            # test error is thrown if u0 is not a matrix
+            @test_throws ErrorException continuation(hopf2d, 1, 6, "beta", 0:0.01:2)
+            @test_throws ErrorException continuation(hopf2d, [1;0], 6, "beta", 0:0.01:2)
+            @test_throws ErrorException continuation(hopf2d, [1, 0], 6, "beta", 0:0.01:2)
+        
+        
+            # test error is thrown if u0 is not a 1xn matrix
+            @test_throws ErrorException continuation(hopf2d, [1 2; 3 4], 6, "beta", 0:0.01:2)
+        
+        
+            # test error is thrown if u0 is not correct length
+            @test_throws ErrorException continuation(hopf2d, [1], 6, "beta", 0:0.01:2)
+        
+            
+            # test error is thrown if method input is incorrect
+            @test_throws ErrorException continuation(hopf2d, [1 1], 6, "beta", 0:0.01:2,
+                method = 1)
+            @test_throws ErrorException continuation(hopf2d, [1 1], 6, "beta", 0:0.01:2,
+                method = "pseudo_arclengths")
+    
+            
+            # test error is thrown if discretisation input is incorrect
+            @test_throws ErrorException continuation(hopf2d, [1 1], 6, "beta", 0:0.01:2,
+                discretisation = 2)
+            @test_throws ErrorException continuation(hopf2d, [1 1], 6, "beta", 0:0.01:2,
+                discretisation = "shoot")
+    
+    
+            # test error is thrown if par_values input is incorrect
+            @test_throws ErrorException continuation(hopf2d, [1 1], 6, "beta", [0 2])
+            @test_throws ErrorException continuation(hopf2d, [1 1], 6, "beta", [0.1 0.5 1.0 1.5 2.0])
+            @test_throws ErrorException continuation(hopf2d, [1 1], 6, "beta", 5)
+            @test_throws ErrorException continuation(hopf2d, [1 1], 6, "beta", [5])
+            @test_throws ErrorException continuation(hopf2d, [1 1], 6, "beta", "0, 2")
+    
+    
+            # test error is thrown if parameter input is incorrect
+            @test_throws ErrorException continuation(hopf2d, [1 1], 6, "bet", 0:0.01:2)
+            @test_throws ErrorException continuation(hopf2d, [1 1], 6, 1, 0:0.01:2)
+            @test_throws ErrorException continuation(hopf2d, [1 1], 6, [1], 0:0.01:2)
+    
+        end
+    
+        @testset verbose = true "Output Tests" begin
+            
+            # test if found limit cycle matches the analytical solution
+            new_par_values, conditions = continuation(hopf2d, [1 1], 6, "beta", 0:0.01:2)
+            @test isapprox(conditions[199, 1:2], [0; 0], atol=1e-8)
+            
         end
     end
 
@@ -162,6 +223,8 @@ Run the tests!
         end
     end
 end
+
+
 
 
 
