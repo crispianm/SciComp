@@ -1,16 +1,45 @@
-function natural_parameter_continuation(f, u0_, alpha_range, delta_alpha, discretisation, arg...)
+function np_continuation(f, x0, T, par_values; discretisation, arg...)
     
-    num_alphas = floor(abs(alpha_range[end] - alpha_range[1]) / delta_alpha)
-    alphas = linrange(alpha_range[1], alpha_range[end], num_alphas)
-    return alphas
+    """
+    Attempts to find a function's solution for each parameter value using the last found solution as an initial guess.
+    First solution is found using the inputted initial conditions, x0.
 
+        Parameters:
+            f (function): Function which returns a singular value or 1 x n matrix of values.
+                The parameter 
+            x0 (matrix): Matrix of initial values in the 1 x n form, eg: [1] or [1 1].
+            par_values (array or range): Parameter values to solve between.
+            discretisation (string): The discretisation to use, either "shooting" or "none."
+            arg (list, optional): Arguments to pass to f.
+
+        Returns:
+            par_values, conditions: the parameter values and corresponding solutions.
+
+        Example Usage:
+            np_continuation(hopf2d, [1 1], 6, 0:0.01:2, discretisation="shooting")
+    """
+    x0 = [x0 T]
+    x0 = [Float64(number) for number in x0] # convert ints to floats for use in nlsolve
+
+    if discretisation == "shooting"
+        discretisation = (u0, par) -> shoot(f, u0, phase_index=0, beta=par)
+    elseif discretisation == "none"
+        discretisation = (u0, par) -> f(u0, c=par)
+    end
+
+    # Computation
+    conditions = nlsolve((u) -> discretisation(u, par_values[1]), x0).zero
+    for parameter in par_values[2:end]
+        # solve using previous initial condition
+        x = nlsolve((u) -> discretisation(u, parameter), conditions[[end],:]).zero
+        conditions = [conditions; x]
+    end
+
+    return par_values, conditions
 end
 
-function pseudo_arclength(f, u0_, alpha_range, delta_alpha, discretisation, arg...)
+function pseudo_arclength(f, x0, T, par_values; discretisation, arg...)
 
     
 
 end
-
-
-# https://engmaths.github.io/emat30008/odes/numericalcontinuation/

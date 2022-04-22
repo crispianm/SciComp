@@ -12,23 +12,23 @@ real = ℯ
 
 println("For Δt = 0.001: ")
 # Euler estimate of x(1)
-solution = solve_ode(f, x0, t, "euler", 0.001)
+solution = solve_ode(f, x0, t; method="euler", Δt=0.001)
 println("\tEuler approximation = \t\t", solution[end][1])
 
 # Ralston4 estimate of x(1)
-solution = solve_ode(f, x0, t, "ralston4", 0.001)
+solution = solve_ode(f, x0, t; method="ralston4", Δt=0.001)
 println("\tRalston4 approximation = \t", solution[end][1])
 
 # Heun3 estimate of x(1)
-solution = solve_ode(f, x0, t, "heun3", 0.001)
+solution = solve_ode(f, x0, t; method="heun3", Δt=0.001)
 println("\tHeun3 approximation = \t\t", solution[end][1])
 
 # 3/8 Rule estimate of x(1)
-solution = solve_ode(f, x0, t, "three_eighths_rule", 0.001)
+solution = solve_ode(f, x0, t; method="three_eighths_rule", Δt=0.001)
 println("\t3/8 Rule approximation = \t", solution[end][1])
 
 # RK4 estimate of x(1)
-solution = solve_ode(f, x0, t, "rk4", 0.001)
+solution = solve_ode(f, x0, t; method="rk4", Δt=0.001)
 println("\tRK4 approximation = \t\t", solution[end][1])
 
 euler_error = Any[]
@@ -38,11 +38,11 @@ three_eighths_rule_error = Any[]
 rk4_error = Any[]
 
 for value in Δt_max
-    euler_sol = solve_ode(f, x0, t, "euler", value)[end][1];
-    ralston4_sol = solve_ode(f, x0, t, "ralston4", value)[end][1];
-    heun3_sol = solve_ode(f, x0, t, "heun3", value)[end][1];
-    three_eighths_rule_sol = solve_ode(f, x0, t, "three_eighths_rule", value)[end][1];
-    rk4_sol = solve_ode(f, x0, t, "rk4", value)[end][1];
+    euler_sol = solve_ode(f, x0, t; method="euler", Δt=value)[end][1];
+    ralston4_sol = solve_ode(f, x0, t; method="ralston4", Δt=value)[end][1];
+    heun3_sol = solve_ode(f, x0, t; method="heun3", Δt=value)[end][1];
+    three_eighths_rule_sol = solve_ode(f, x0, t; method="three_eighths_rule", Δt=value)[end][1];
+    rk4_sol = solve_ode(f, x0, t; method="rk4", Δt=value)[end][1];
 
     push!(euler_error, abs.(euler_sol .- real))
     push!(ralston4_error, abs.(ralston4_sol .- real))

@@ -183,7 +183,7 @@ if save_figures
     savefig(hopf_plot, "./output/Hopf Plot.png")
 
 
-    ## Plot phase portrait
+    ## Plot 3d phase portrait
     hopf_phase_portrait = plot_phase_portrait(hopf2d, u0, t, ["u1 (x)" "u2 (y)"])
     savefig(hopf_phase_portrait, "./output/Hopf Phase Portrait.png")
 
@@ -227,19 +227,19 @@ This is just to check if the visualisation and the numerical shooting emthods ar
 
 if save_figures_3d
 
-    # Hopf 3d System
+    ## Plot 3d phase portrait of Hopf 3d System
     t = 0:0.1:200
     u0 = [1 0 -2]
     hopf_phase_portrait_3d = plot_phase_portrait_3d(hopf3d, u0, t);
     savefig(hopf_phase_portrait_3d, "./output/3d Phase Portrait - Hopf.png")
 
-    # Cheng-Wang System
+    ## Plot 3d phase portrait of Cheng-Wang System
     t = 0:0.01:100
     u0 = [1 0 1]
     cheng_wang_phase_portrait_3d = plot_phase_portrait_3d(cheng_wang, u0, t);
     savefig(cheng_wang_phase_portrait_3d, "./output/3d Phase Portrait - Cheng-Wang.png")
 
-    # Lorenz System
+    ## Plot 3d phase portrait of Lorenz System
     t = 0:0.01:100
     u0 = [1 1 1]
     lorenz_phase_portrait_3d = plot_phase_portrait_3d(lorenz, u0, t);
