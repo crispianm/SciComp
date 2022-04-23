@@ -191,10 +191,8 @@ function solve_ode(f, x0, t; method="rk4", Δt=0.01, arg...)
     # Error handling
     if t[1] != 0
         error("Please make sure the first value of the time series is 0.")
-    elseif size(t)[1] < 2
+    elseif length(t) < 2
         error("Please make sure the time series has at least 2 values.")
-    elseif size(t)[2] > 1
-        error("Please make sure the time series is 1 dimensional.")
     elseif !isa(x0, Array)
         error("Please make sure the initial condition is a 1 x n matrix.\neg: [1] or [1 1].")
     elseif size(x0)[1] != 1

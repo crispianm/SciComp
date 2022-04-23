@@ -29,7 +29,6 @@ function plot_ode(ode, u0, t, labels=["t" "x"], arg...)
 
     layout = Layout(
         xaxis_title = "time",
-        width=700, height=350,
         )
 
     plot([rk4_x, rk4_y], layout)
@@ -66,7 +65,6 @@ function plot_ode_3d(ode, u0, t, labels=["u1" "u2" "u3"]; arg...)
 
     layout = Layout(
         xaxis_title = "time",
-        width=700, height=350,
         )
 
     plot([rk4_x, rk4_y, rk4_z], layout)
@@ -90,7 +88,7 @@ function plot_phase_portrait(ode, u0, t, axis_labels=["u1" "u2"], arg...)
     Returns:
         A 2d plot of the ode's phase portrait.
     """
-    println(arg)
+
     solution = solve_ode(ode, u0, t; arg...)
 
     # Create trace
@@ -105,7 +103,6 @@ function plot_phase_portrait(ode, u0, t, axis_labels=["u1" "u2"], arg...)
     layout = Layout(
         xaxis_title = axis_labels[1],
         yaxis_title = axis_labels[2],
-        width=700, height=350,
         )
 
     plot([rk4], layout)
@@ -146,7 +143,6 @@ function plot_phase_portrait_3d(ode, u0, t, axis_labels=["u1" "u2" "u3"], arg...
         xaxis_title = axis_labels[1],
         yaxis_title = axis_labels[2],
         zaxis_title = axis_labels[3],
-        width=700, height=350,
         )
 
     plot([rk4], layout)

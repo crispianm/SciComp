@@ -189,8 +189,12 @@ function finite_difference(u_I, κ, L, T, mx, mt; boundary=zero_boundary, method
         error("Please enter a single number for κ.")
     elseif typeof(L) ∉ (Int, Float64)
         error("Please enter a single number for L.")
+    elseif L < 0
+        error("Please enter a positive number for L.")
     elseif typeof(T) ∉ (Int, Float64)
         error("Please enter a single number for T.")
+    elseif T < 0
+        error("Please enter a positive number for T.")
     elseif typeof(mx) != Int
         error("Please enter a single integer for mx.")
     elseif mx < 0

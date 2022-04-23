@@ -165,6 +165,28 @@ end
 
 
 """
+Finite Difference Functions
+"""
+
+# initial temperature distribution
+function u_I(x)
+
+    y = sin.(pi*x/L)
+
+    return y
+end
+
+# the exact solution
+function u_exact(x, t)
+
+    y = @. exp(-κ*((pi/L)^2)*t) * sin(pi*x/L)
+
+    return y
+end
+
+
+
+"""
 Other Functions (fun to plot)
 """
 
