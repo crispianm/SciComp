@@ -6,7 +6,7 @@ using NLsolve
 using ForwardDiff
 using Test
 using LinearAlgebra
-
+using ProgressMeter
 
 # Subsystems
 include("./examples/example_functions.jl")

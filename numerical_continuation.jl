@@ -1,3 +1,5 @@
+using NLsolve
+using LinearAlgebra
 include("./numerical_shooting.jl")
 
 function pseudo_arclength_eq(secant, v, v_pred)
@@ -189,6 +191,12 @@ function continuation(f, u0, T, parameter, par_values; method="pseudo_arclength"
             push!(new_par_values, sol[1])
 
             i += 1
+
+            if i > 2*length(par_values)
+                println("Warning: Pseudo-arclength method did not converge.")
+                break
+            end
+
         end
     end
     

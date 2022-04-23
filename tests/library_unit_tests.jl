@@ -23,6 +23,8 @@ save_figures_3d = false
 Run the tests!
 """
 
+test = ProgressUnknown("Performing tests: ", spinner=true)
+
 @testset verbose = true "System Unit Tests" begin
 
     @testset verbose = true "ode_solver" begin
@@ -48,6 +50,8 @@ Run the tests!
             # test error is thrown if x0 is not correct length
             @test_throws ErrorException solve_ode(f2, [1], t, method="rk4")
 
+            ProgressMeter.next!(test)
+
         end
 
         @testset verbose = true "Output Tests" begin
@@ -65,6 +69,8 @@ Run the tests!
             f2_sol = f2_solution(x0, t)
             f2_numerical_sol = solve_ode(f2, x0, t, method="rk4")
             @test  all(isapprox.(f2_numerical_sol, f2_sol, atol=1e-6))
+
+            ProgressMeter.next!(test)
 
         end
     end
@@ -98,6 +104,8 @@ Run the tests!
             @test_throws ErrorException find_limit_cycle(f2, [1 1], 10, phase_index=[3])
             @test_throws ErrorException find_limit_cycle(f2, [1 1], 10, phase_index=2.5)
             @test_throws ErrorException find_limit_cycle(f2, [1 1], 10, phase_index="0")
+
+            ProgressMeter.next!(test)
         
         end
 
@@ -124,6 +132,8 @@ Run the tests!
             @test u0_0 != u0_2
             @test u0_0 != u0_3
 
+            ProgressMeter.next!(test)
+
         end
 
         @testset verbose = true "Higher Dimensional Output" begin
@@ -137,6 +147,8 @@ Run the tests!
             hopf_solution = hopf3d_sol(u0, 0:0.1:T; theta=0) # adjusted for phase
             hopf_numerical_sol = solve_ode(hopf3d, u0, 0:0.1:T, method="rk4")
             @test all(isapprox.(hopf_numerical_sol, hopf_solution, atol=1e-5))
+
+            ProgressMeter.next!(test)
             
         end
     end
@@ -191,6 +203,8 @@ Run the tests!
             @test_throws ErrorException continuation(hopf2d, [1 1], 6, "bet", 0:0.01:2)
             @test_throws ErrorException continuation(hopf2d, [1 1], 6, 1, 0:0.01:2)
             @test_throws ErrorException continuation(hopf2d, [1 1], 6, [1], 0:0.01:2)
+
+            ProgressMeter.next!(test)
     
         end
     
@@ -199,7 +213,13 @@ Run the tests!
             # test if found limit cycle matches the analytical solution
             new_par_values, conditions = continuation(hopf2d, [1 1], 6, "beta", 0:0.01:2)
             @test isapprox(conditions[199, 1:2], [0; 0], atol=1e-8)
+
+
+            new_par_values, conditions = continuation(predprey, [1 1], 6, "b", 0.2:0.01:0.3)
+            @test isapprox(new_par_values[findfirst(isapprox.(conditions, 0.270, atol=0.001))], 0.26, atol=0.01)
             
+            ProgressMeter.next!(test)
+    
         end
     end
 
@@ -212,6 +232,8 @@ Run the tests!
             bad_t = 1:0.1:2
             @test_throws ErrorException solve_ode(f2, [1], bad_t, method="rk4")
 
+            ProgressMeter.next!(test)
+
         end
 
         @testset verbose = true "Output Tests" begin
@@ -220,9 +242,16 @@ Run the tests!
             u0, T = find_limit_cycle(hopf2d, [-1 0], 6)
             @test isapprox(T, 2*pi)
 
+            ProgressMeter.next!(test)
+
+            println("\n")
+
         end
     end
 end
+
+println("\n")
+ProgressMeter.finish!(test)
 
 
 

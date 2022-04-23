@@ -4,3 +4,4 @@ NLsolve
 ForwardDiff
 Test
 LinearAlgebra
+ProgressMeter
