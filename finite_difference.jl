@@ -1,7 +1,23 @@
 using PlotlyJS
 using LinearAlgebra
 
-function forward_euler(u_I, λ, mx, mt, x, arg...)
+function zero_boundary(x, t)
+
+    """
+    Boundary condition = 0.
+
+        Parameters:
+            x: x-coordinate
+            t: time
+
+        Returns:
+            0: Always. It's very useful.
+    """
+
+    return 0
+end
+
+function forward_euler(u_I, λ, mx, mt, x, t; boundary=zero_boundary, arg...)
 
     """
     Forward Euler estimate of PDE, for use in the finite_difference function
@@ -12,6 +28,9 @@ function forward_euler(u_I, λ, mx, mt, x, arg...)
             mx (int): Number of gridpoints in space.
             mt (int): Number of gridpoints in time.
             x (range): Range of x values, found inside the finite_difference function.
+            t (range): Range of time values, found inside the finite_difference function.
+            boundary (function): Boundary condition function. Defaults to zero_boundary
+            arg (list, optional): Arguments to pass to u_I.
 
         Returns:
             x_est, u_j: The values of u at each x over time T.
@@ -33,12 +52,11 @@ function forward_euler(u_I, λ, mx, mt, x, arg...)
     for j in 1:mt
         # Forward Euler timestep at inner mesh points
         # PDE discretised at position x[i], time t[j]
-
         u_jp1[2:end] = A_FE * u_j[2:end]
 
         # Boundary conditions
-        u_jp1[1] = 0
-        u_jp1[mx+1] = 0
+        u_jp1[1] = boundary(0, t[j])
+        u_jp1[mx+1] = boundary(x[end], t[j])
             
         # Save u_j at time t[j+1]
         u_j = u_jp1
@@ -47,7 +65,7 @@ function forward_euler(u_I, λ, mx, mt, x, arg...)
     return x, u_j
 end
 
-function backward_euler(u_I, λ, mx, mt, x, arg...)
+function backward_euler(u_I, λ, mx, mt, x, t; boundary=zero_boundary, arg...)
 
     """
     Backward Euler estimate of PDE, for use in the finite_difference function
@@ -58,6 +76,9 @@ function backward_euler(u_I, λ, mx, mt, x, arg...)
             mx (int): Number of gridpoints in space.
             mt (int): Number of gridpoints in time.
             x (range): Range of x values, found inside the finite_difference function.
+            t (range): Range of time values, found inside the finite_difference function.
+            boundary (function): Boundary condition function. Defaults to zero_boundary
+            arg (list, optional): Arguments to pass to u_I.
 
         Returns:
             x_est, u_j: The values of u at each x over time T.
@@ -65,11 +86,10 @@ function backward_euler(u_I, λ, mx, mt, x, arg...)
 
     # Create A_BE matrix
     A_BE = Tridiagonal(ones(mx-1)*(-λ), ones(mx)*(1 + 2*λ), ones(mx-1)*(-λ))
-    println("X = ", mx)
+
     # Set up the solution variables
     u_j = zeros(size(x))        # u at current time step
     u_jp1 = zeros(size(x))      # u at next time step
-
     # Set initial condition
     for i in 1:mx+1
         u_j[i] = u_I(x[i])
@@ -79,12 +99,11 @@ function backward_euler(u_I, λ, mx, mt, x, arg...)
     for j in 1:mt
         # Forward Euler timestep at inner mesh points
         # PDE discretised at position x[i], time t[j]
-
         u_jp1[2:end] = A_BE \ u_j[2:end]
 
         # Boundary conditions
-        u_jp1[1] = 0
-        u_jp1[mx+1] = 0
+        u_jp1[1] = boundary(0, t[j])
+        u_jp1[mx+1] = boundary(x[end], t[j])
             
         # Save u_j at time t[j+1]
         u_j = u_jp1
@@ -93,7 +112,7 @@ function backward_euler(u_I, λ, mx, mt, x, arg...)
     return x, u_j
 end
 
-function crank_nicholson(u_I, λ, mx, mt, x, arg...)
+function crank_nicholson(u_I, λ, mx, mt, x, t; boundary=zero_boundary, arg...)
 
     """
     Crank Nicholson estimate of PDE, for use in the finite_difference function
@@ -104,6 +123,9 @@ function crank_nicholson(u_I, λ, mx, mt, x, arg...)
             mx (int): Number of gridpoints in space.
             mt (int): Number of gridpoints in time.
             x (range): Range of x values, found inside the finite_difference function.
+            t (range): Range of time values, found inside the finite_difference function.
+            boundary (function): Boundary condition function. Defaults to zero_boundary
+            arg (list, optional): Arguments to pass to u_I.
 
         Returns:
             x_est, u_j: The values of u at each x over time T.
@@ -126,12 +148,11 @@ function crank_nicholson(u_I, λ, mx, mt, x, arg...)
     for j in 1:mt
         # Forward Euler timestep at inner mesh points
         # PDE discretised at position x[i], time t[j]
-
         u_jp1[2:end] = A_CN \ B_CN * u_j[2:end]
 
         # Boundary conditions
-        u_jp1[1] = 0
-        u_jp1[mx+1] = 0
+        u_jp1[1] = boundary(0, t[j])
+        u_jp1[mx+1] = boundary(x[end], t[j])
             
         # Save u_j at time t[j+1]
         u_j = u_jp1
@@ -141,7 +162,7 @@ function crank_nicholson(u_I, λ, mx, mt, x, arg...)
 end
 
 
-function finite_difference(u_I, κ, L, T, mx, mt; method="cn", arg...)
+function finite_difference(u_I, κ, L, T, mx, mt; boundary=zero_boundary, method="cn", arg...)
 
     """
     Solves PDE using finite differences.
@@ -153,10 +174,11 @@ function finite_difference(u_I, κ, L, T, mx, mt; method="cn", arg...)
             T (float): Total time to solve for.
             mx (int): Number of gridpoints in space.
             mt (int): Number of gridpoints in time.
+            boundary (function): Boundary condition function. Defaults to zero_boundary.
             method (str): The finite difference method to use. Defaults to "cn"
                 Allowable method inputs:
                     "forward_euler", "fe", "backward_euler", "be", "crank_nicholson", or "cn"
-            arg... (list): Additional arguments to pass to u_I.
+            arg (list, optional): Arguments to pass to u_I.
 
         Returns:
             x_est, u_j: The values of u at each x over time T.
@@ -199,11 +221,11 @@ function finite_difference(u_I, κ, L, T, mx, mt; method="cn", arg...)
 
     # Assign method and find x_est and u_j
     if method == "forward_euler" || method == "fe"
-        x_est, u_j = forward_euler(u_I, λ, mx, mt, x)
+        x_est, u_j = forward_euler(u_I, λ, mx, mt, x, t, boundary=boundary, arg...)
     elseif method == "backward_euler" || method == "be"
-        x_est, u_j = backward_euler(u_I, λ, mx, mt, x)
+        x_est, u_j = backward_euler(u_I, λ, mx, mt, x, t, boundary=boundary, arg...)
     elseif method == "crank_nicholson" || method == "cn"
-        x_est, u_j = crank_nicholson(u_I, λ, mx, mt, x)
+        x_est, u_j = crank_nicholson(u_I, λ, mx, mt, x, t, boundary=boundary, arg...)
     else
         error("Unknown method: ", method)
     end
