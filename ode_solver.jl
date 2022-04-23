@@ -180,11 +180,7 @@ function solve_ode(f, x0, t; method="rk4", Δt=0.01, arg...)
         t (array or range): Time values to solve between. The first element of t should be the initial value, 0.
         method (string): method used to approximate solution
             Allowable method inputs:
-                euler
-                heun3
-                ralston4
-                rk4
-                three_eighths_rule
+                "euler", "heun3", "ralston4", "rk4", "three_eighths_rule"
         Δt (float): Step size.
         arg (list, optional): Arguments to pass to f.
     
@@ -195,6 +191,10 @@ function solve_ode(f, x0, t; method="rk4", Δt=0.01, arg...)
     # Error handling
     if t[1] != 0
         error("Please make sure the first value of the time series is 0.")
+    elseif size(t)[1] < 2
+        error("Please make sure the time series has at least 2 values.")
+    elseif size(t)[2] > 1
+        error("Please make sure the time series is 1 dimensional.")
     elseif !isa(x0, Array)
         error("Please make sure the initial condition is a 1 x n matrix.\neg: [1] or [1 1].")
     elseif size(x0)[1] != 1

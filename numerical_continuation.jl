@@ -122,11 +122,15 @@ function continuation(f, u0, T, parameter, par_values; method="pseudo_arclength"
             u0 (matrix): Matrix of initial values in the 1 x n form, eg: [1] or [1 1].
             T (float): Initial guess for the period.
             parameter (string): The parameter in the system to vary.
-                Allowable parameter inputs: a, alpha, b, beta, c, d, delta, sigma
+                Allowable parameter inputs:
+                    "a", "alpha", "b", "beta", "c", "d", "delta", "sigma"
             par_values (range): Parameter values to solve between, made with colons, eg: 0:0.1:2.
             method (string): Method to use to find the solution.
-                Allowable method inputs: pseudo_arclength, pa, natural_parameter_continuation, or npc
-            discretisation (string): The discretisation to use, either "shooting" or "none."
+                Allowable method inputs:
+                    "pseudo_arclength", "pa", "natural_parameter_continuation", or "npc"
+            discretisation (string): The discretisation to use.
+                Allowable discretisation inputs:
+                    "shooting" or "none"
             arg (list, optional): Arguments to pass to f.
 
         Returns:
@@ -236,6 +240,8 @@ function continuation(f, u0, T, parameter, par_values; method="pseudo_arclength"
         new_par_values, conditions = np_continuation(f, u0, T, par_values, discretisation)
     elseif method == "pseudo_arclength" || method == "pa"
         new_par_values, conditions = pseudo_arclength(f, u0, T, par_values, discretisation)
+    else
+        error("Unknown method: ", method)
     end
     
     return new_par_values, conditions

@@ -8,19 +8,20 @@ include("../visualisation.jl")
 include("../finite_difference.jl")
 
 
-#  Test script to run the ODE solver for a variety of differential equations
-#  and check them against explicit solutions.
- 
-#  Set the save_figures and save_figures_3d variables to true
-#  to save pngs in the output folder.
+"""
+    Test script to run the ODE solver for a variety of differential equations
+    and check them against explicit solutions.
+
+"""
 
 
+#  Set save_figures and save_figures_3d variables to true to save pngs to the output folder.
 save_figures = false
 save_figures_3d = false
 
 
 """
-Run the tests!
+Run the tests !
 """
 
 test = ProgressUnknown("Performing tests: ", spinner=true)
@@ -311,7 +312,41 @@ if save_figures
 
 
     ## Plot finite_difference comparison plot
-    
+
+    kappa = 1 
+    L = 1.0   
+    T = .5    
+    mx = 10   
+    mt = 1000 
+
+    function u_I(x)
+        y = sin.(pi*x/L)
+        return y
+    end
+
+    function u_exact(x,t)
+        y = exp.(-kappa*(pi^2/L^2)*t)*sin.(pi*x/L)
+        return y
+    end
+
+    fex, feu_j = finite_difference(u_I, kappa, L, T, mx, mt, method="fe") # forward euler Estimate  
+    bex, beu_j = finite_difference(u_I, kappa, L, T, mx, mt, method="be") # backward euler Estimate
+    cnx, cnu_j = finite_difference(u_I, kappa, L, T, mx, mt, method="cn") # crank nicholson Estimate
+
+    layout = Layout(
+        xaxis_title = "x",
+        yaxis_title = string("u(x, ",string(T),")")
+        )
+
+    fd_method_comp = plot([
+        scatter(x=0:L/250:L, y=u_exact(xx,T), mode="lines", name="exact", showlegend=true), 
+        scatter(x=fex, y=feu_j, mode="markers", name="forward euler", showlegend=true), 
+        scatter(x=bex, y=beu_j, mode="markers", name="backward euler", showlegend=true), 
+        scatter(x=cnx, y=cnu_j, mode="markers", name="crank nicholson", showlegend=true)
+        ], layout)
+
+    savefig(fd_method_comp, "./output/Finite Difference Method Comparison.png")
+
 end
 
 
