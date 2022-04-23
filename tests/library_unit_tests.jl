@@ -308,6 +308,10 @@ if save_figures
 
     sol_plot = plot([x_plot, y_plot, u1_plot, u2_plot], layout)
     savefig(sol_plot, "./output/Hopf Solution Plot.png")
+
+
+    ## Plot finite_difference comparison plot
+    
 end
 
 

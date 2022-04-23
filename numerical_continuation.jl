@@ -2,6 +2,36 @@ using NLsolve
 using LinearAlgebra
 include("./numerical_shooting.jl")
 
+
+function np_continuation(f, u0, T, par_values, discretisation; arg...)
+
+    """
+    Continuation method using the last found solution as an initial guess.
+    First solution is found using the inputted initial conditions, u0.
+
+        Parameters:
+            f (function): Function which returns a singular value or 1 x n matrix of values.
+            u0 (matrix): Matrix of initial values in the 1 x n form, eg: [1] or [1 1].
+            T (float): Initial guess for the period.
+            par_values (range): Parameter values to solve between, made with colons, eg: 0:0.1:2.
+            discretisation (anon. function): The discretisation to use, defined in the "continuation" function below.
+            arg (list, optional): Arguments to pass to f.
+
+        Returns:
+            par_values, conditions: the parameter values and corresponding solutions.
+    """
+
+    conditions = nlsolve((u) -> discretisation(u, par_values[1]), u0).zero
+    for parameter in par_values[2:end]
+        # Solve using previous initial condition
+        x = nlsolve((u) -> discretisation(u, parameter), conditions[[end],:]).zero
+        conditions = [conditions; x]
+    end
+
+    return par_values, conditions
+end
+
+
 function pseudo_arclength_eq(secant, v, v_pred)
 
     """
@@ -14,7 +44,6 @@ function pseudo_arclength_eq(secant, v, v_pred)
 
         Returns:
             The pseudo arclength estimate.
-
     """
 
     estimate = dot(secant, v - v_pred)
@@ -22,24 +51,81 @@ function pseudo_arclength_eq(secant, v, v_pred)
     return estimate
 end
 
+function pseudo_arclength(f, u0, T, par_values, discretisation; arg...)
+
+    """
+    Continuation method using the pseudo arclength equation.
+
+        Parameters:
+            f (function): Function which returns a singular value or 1 x n matrix of values.
+            u0 (matrix): Matrix of initial values in the 1 x n form, eg: [1] or [1 1].
+            T (float): Initial guess for the period.
+            par_values (range): Parameter values to solve between, made with colons, eg: 0:0.1:2.
+            discretisation (anon. function): The discretisation to use, defined in the "continuation" function below.
+            arg (list, optional): Arguments to pass to f.
+
+        Returns:
+            par_values, conditions: the parameter values and corresponding solutions.
+    """
+    
+    # Create a list of new parameter values to try
+    new_par_values = [par_values[1]; par_values[2]]
+
+    # Check if the parameter difference is positive or negative 
+    if par_values[end] - par_values[1] < 0
+        end_function = (value) -> value > par_values[end]
+    else
+        end_function = (value) -> value < par_values[end]
+    end
+
+    # Use the first solution as an initial guess for the next
+    conditions = nlsolve((u) -> discretisation(u, par_values[1]), u0).zero
+    conditions = [conditions; nlsolve((u) -> discretisation(u, new_par_values[2]), conditions).zero]
+
+    i = 1
+    while end_function(new_par_values[end])
+
+        # Define augmented state vectors
+        v0 = [new_par_values[i] conditions[[i],:]]
+        v1 = [new_par_values[i+1] conditions[[i+1],:]]
+        
+        # Find the secant
+        secant = v1 - v0
+        
+        # Find the pseudo-arclength estimate
+        v_pred = v1 + secant
+        sol = nlsolve((v2) -> [discretisation(v2[:,2:end], v2[1]) pseudo_arclength_eq(secant, v2, v_pred)], v_pred).zero
+        
+        # Append the new condition and parameter value
+        conditions = [conditions; sol[:,2:end]]
+        push!(new_par_values, sol[1])
+
+        i += 1
+
+        if i > 2*length(par_values)
+            println("Warning: Pseudo-arclength method did not converge.")
+            break
+        end
+    end
+
+    return new_par_values, conditions
+end
+
 
 function continuation(f, u0, T, parameter, par_values; method="pseudo_arclength", discretisation="shooting", arg...)
     
     """
-    Attempts to find a function's solution for each parameter value using the last found solution as an initial guess.
-    First solution is found using the inputted initial conditions, u0.
+    Finds a function's solution for each a range of parameter values.
 
         Parameters:
             f (function): Function which returns a singular value or 1 x n matrix of values.
-                The parameter 
             u0 (matrix): Matrix of initial values in the 1 x n form, eg: [1] or [1 1].
             T (float): Initial guess for the period.
             parameter (string): The parameter in the system to vary.
-                Allowable method inputs: a, alpha, b, beta, c, d, delta, sigma
+                Allowable parameter inputs: a, alpha, b, beta, c, d, delta, sigma
             par_values (range): Parameter values to solve between, made with colons, eg: 0:0.1:2.
             method (string): Method to use to find the solution.
-                Allowable method inputs: 
-                    pseudo_arclength, natural_parameter_continuation
+                Allowable method inputs: pseudo_arclength, pa, natural_parameter_continuation, or npc
             discretisation (string): The discretisation to use, either "shooting" or "none."
             arg (list, optional): Arguments to pass to f.
 
@@ -87,7 +173,7 @@ function continuation(f, u0, T, parameter, par_values; method="pseudo_arclength"
     end
 
     # Check method is allowed
-    allowable_methods = ["pseudo_arclength", "natural_parameter_continuation"]
+    allowable_methods = ["pseudo_arclength","pa","natural_parameter_continuation","npc"]
     if string(method) ∉ allowable_methods
         error("Method not assigned, please enter either:
         pseudo_arclength or natural_parameter_continuation.")
@@ -146,58 +232,10 @@ function continuation(f, u0, T, parameter, par_values; method="pseudo_arclength"
 
     ## Computation
 
-    if method == "natural_parameter_continuation"
-
-        new_par_values = par_values
-        conditions = nlsolve((u) -> discretisation(u, new_par_values[1]), u0).zero
-        for parameter in new_par_values[2:end]
-            # Solve using previous initial condition
-            x = nlsolve((u) -> discretisation(u, parameter), conditions[[end],:]).zero
-            conditions = [conditions; x]
-        end
-
-    elseif method == "pseudo_arclength"
-
-        # Create a list of new parameter values to try
-        new_par_values = [par_values[1]; par_values[2]]
-
-        # Check if the parameter difference is positive or negative 
-        if par_values[end] - par_values[1] < 0
-            end_function = (value) -> value > par_values[end]
-        else
-            end_function = (value) -> value < par_values[end]
-        end
-
-        # Use the first solution as an initial guess for the next
-        conditions = nlsolve((u) -> discretisation(u, par_values[1]), u0).zero
-        conditions = [conditions; nlsolve((u) -> discretisation(u, new_par_values[2]), conditions).zero]
-    
-        i = 1
-        while end_function(new_par_values[end])
-
-            # Define augmented state vectors
-            v0 = [new_par_values[i] conditions[[i],:]]
-            v1 = [new_par_values[i+1] conditions[[i+1],:]]
-            
-            # Find the secant
-            secant = v1 - v0
-            
-            # Find the pseudo-arclength estimate
-            v_pred = v1 + secant
-            sol = nlsolve((v2) -> [discretisation(v2[:,2:end], v2[1]) pseudo_arclength_eq(secant, v2, v_pred)], v_pred).zero
-            
-            # Append the new condition and parameter value
-            conditions = [conditions; sol[:,2:end]]
-            push!(new_par_values, sol[1])
-
-            i += 1
-
-            if i > 2*length(par_values)
-                println("Warning: Pseudo-arclength method did not converge.")
-                break
-            end
-
-        end
+    if method == "natural_parameter_continuation" || method == "npc"
+        new_par_values, conditions = np_continuation(f, u0, T, par_values, discretisation)
+    elseif method == "pseudo_arclength" || method == "pa"
+        new_par_values, conditions = pseudo_arclength(f, u0, T, par_values, discretisation)
     end
     
     return new_par_values, conditions

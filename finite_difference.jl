@@ -1,23 +1,7 @@
 using PlotlyJS
 using LinearAlgebra
 
-function finite_difference(u_I, kappa, L, T, mx, mt, method, arg...)
-
-    # Set up the numerical environment variables
-    x = LinRange(0, L, mx+1)     # mesh points in space
-    t = LinRange(0, T, mt+1)     # mesh points in time
-    deltax = x[2] - x[1]            # gridspacing in x
-    deltat = t[2] - t[1]            # gridspacing in t
-    lmbda = kappa*deltat/(deltax^2)    # mesh fourier number
-    println("deltax = ", deltax)
-    println("deltat = ", deltat)
-    println("lambda = ", lmbda)
-    x, u_j = method(u_I, kappa, L, T, mx, mt, x)
-
-    return x, u_j
-end
-
-function forward_euler(u_I, kappa, L, T, mx, mt, x, arg...)
+function forward_euler(u_I, lmbda, L, T, mx, mt, x, arg...)
 
     # Create A_FE matrix
     A_FE = Tridiagonal(ones(mx-1)*(lmbda), ones(mx)*(1 - 2*lmbda), ones(mx-1)*(lmbda))
@@ -46,16 +30,14 @@ function forward_euler(u_I, kappa, L, T, mx, mt, x, arg...)
         u_j[:] = u_jp1[:]
     end
 
-    # println("x: ", x)
-    # println("u_j: ", u_j) 
     return x, u_j
 end
 
-function backward_euler(u_I, kappa, L, T, mx, mt, arg...)
+function backward_euler(u_I, lmbda, L, T, mx, mt, x, arg...)
 
     # Create A_BE matrix
     A_BE = Tridiagonal(ones(mx-1)*(-lmbda), ones(mx)*(1 + 2*lmbda), ones(mx-1)*(-lmbda))
-
+    println("X = ", mx)
     # Set up the solution variables
     u_j = zeros(size(x))        # u at current time step
     u_jp1 = zeros(size(x))      # u at next time step
@@ -80,12 +62,10 @@ function backward_euler(u_I, kappa, L, T, mx, mt, arg...)
         u_j[:] = u_jp1[:]
     end
 
-    # println("x: ", x)
-    # println("u_j: ", u_j) 
     return x, u_j
 end
 
-function crank_nicholson(u_I, kappa, L, T, mx, mt, arg...)
+function crank_nicholson(u_I, lmbda, L, T, mx, mt, x, arg...)
 
     # Create A_CN and B_CN matrices
     A_CN = Tridiagonal(ones(mx-1)*(-lmbda/2), ones(mx)*(1 + lmbda), ones(mx-1)*(-lmbda/2))
@@ -119,55 +99,24 @@ function crank_nicholson(u_I, kappa, L, T, mx, mt, arg...)
 end
 
 
-# kappa = 1   # diffusion constant
-# L = 1.0         # length of spatial domain
-# T = 0.5         # total time to solve for
+function finite_difference(u_I, kappa, L, T, mx, mt, method, arg...)
 
-# function u_I(x)
-#     # initial temperature distribution
-#     y = sin.(pi*x/L)
-#     return y
-# end
+    # Set up the numerical environment variables
+    x = 0:(L/mx):L     # mesh points in space
+    t = 0:(T/mt):T     # mesh points in time
+    deltax = x[2] - x[1]            # gridspacing in x
+    deltat = t[2] - t[1]            # gridspacing in t
+    lmbda = kappa*deltat/(deltax^2)    # mesh fourier number
 
-# function u_exact(x,t)
-#     # the exact solution
-#     y = exp.(-kappa*(pi^2/L^2)*t)*sin.(pi*x/L)
-#     return y
-# end
+    if method == "forward_euler" || method == "fe"
+        x1, u_j = forward_euler(u_I, lmbda, L, T, mx, mt, x)
+    elseif method == "backward_euler" || method == "be"
+        x1, u_j = backward_euler(u_I, lmbda, L, T, mx, mt, x)
+    elseif method == "crank_nicholson" || method == "cn"
+        x1, u_j = crank_nicholson(u_I, lmbda, L, T, mx, mt, x)
+    else
+        error("Unknown method: ", method)
+    end
 
-# # Set numerical parameters
-# mx = 10     # number of gridpoints in space
-# mt = 1000   # number of gridpoints in time
-
-
-# # forward euler Estimate
-# weird_x, u_j = finite_difference(u_I, kappa, L, T, mx, mt, forward_euler)
-# # Create trace
-# f_euler = scatter(x=x, y=u_j, mode="markers", name="forward euler", showlegend=true)
-
-
-# # # backward euler Estimate
-# # x, u_j = finite_difference(u_I, kappa, L, T, mx, mt, backward_euler)
-# # # Create trace
-# # b_euler = scatter(x=x, y=u_j, mode="markers", name="backward euler", showlegend=true)
-
-
-# # # crank nicholson Estimate
-# # x, u_j = finite_difference(u_I, kappa, L, T, mx, mt, crank_nicholson)
-# # # Create trace
-# # c_nicholson = scatter(x=x, y=u_j, mode="markers", name="crank nicholson", showlegend=true)
-
-
-
-# # Plot the final result and exact solution
-# xx = LinRange(0,L,250)
-
-# # Create solution trace
-# exact = scatter(x=xx, y=u_exact(xx,T), mode="lines", name="exact", showlegend=true)
-
-# layout = Layout(
-#     xaxis_title = "x",
-#     yaxis_title = "u(x,0.5)"
-#     )
-
-# plot([exact, f_euler, b_euler, c_nicholson], layout)
+    return x1, u_j
+end
