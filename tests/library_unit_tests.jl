@@ -437,11 +437,11 @@ if save_figures_3d
     end
 
     # Estimate Surfaces
-    fe_estimate = scatter(x=vec(u_est), y=vec(v_est), z=vec(fe_z),name="forward euler",
+    fe_estimate = scatter(x=vec(u_est), y=vec(v_est), z=vec(fe_z),name="Forward Euler",
             mode="markers",type="scatter3d",marker=attr(color="red",size=2))
-    be_estimate = scatter(x=vec(u_est), y=vec(v_est), z=vec(be_z),name="backward euler",
+    be_estimate = scatter(x=vec(u_est), y=vec(v_est), z=vec(be_z),name="Backward Euler",
             mode="markers",type="scatter3d",marker=attr(color="blue",size=2))
-    cn_estimate = scatter(x=vec(u_est), y=vec(v_est), z=vec(cn_z),name="crank nicholson",
+    cn_estimate = scatter(x=vec(u_est), y=vec(v_est), z=vec(cn_z),name="Crank Nicholson",
             mode="markers",type="scatter3d",marker=attr(color="green",size=2))
 
 
@@ -454,13 +454,14 @@ if save_figures_3d
     z = u_exact(u, v)
 
     exact = surface(
-        x=u, 
-        y=v, 
-        z=z,
-        opacity=1
-        )
+    x=u, 
+    y=v, 
+    z=z,
+    name="Exact Solution",
+    opacity=1
+    )
 
-    # PLot
+    # Plot
     layout = Layout(
             showlegend=true,
             legend=attr(x=0, y=1),
