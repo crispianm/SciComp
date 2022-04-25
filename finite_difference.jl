@@ -1,7 +1,7 @@
 using PlotlyJS
 using LinearAlgebra
 
-function zero_boundary(x, t)
+function zero_boundary(x, t, arg...)
 
     """
     Boundary condition = 0.
@@ -55,8 +55,8 @@ function forward_euler(u_initial, λ, mx, mt, x, t; boundary = zero_boundary, ar
         u_jp1[2:end] = A_FE * u_j[2:end]
 
         # Boundary conditions
-        u_jp1[1] = boundary(0, t[j])
-        u_jp1[mx+1] = boundary(x[end], t[j])
+        u_jp1[1] = boundary(0, t[j], arg...)
+        u_jp1[mx+1] = boundary(x[end], t[j], arg...)
 
         # Save u_j at time t[j+1]
         u_j = u_jp1
@@ -102,8 +102,8 @@ function backward_euler(u_initial, λ, mx, mt, x, t; boundary = zero_boundary, a
         u_jp1[2:end] = A_BE \ u_j[2:end]
 
         # Boundary conditions
-        u_jp1[1] = boundary(0, t[j])
-        u_jp1[mx+1] = boundary(x[end], t[j])
+        u_jp1[1] = boundary(0, t[j], arg...)
+        u_jp1[mx+1] = boundary(x[end], t[j], arg...)
 
         # Save u_j at time t[j+1]
         u_j = u_jp1
@@ -151,8 +151,8 @@ function crank_nicholson(u_initial, λ, mx, mt, x, t; boundary = zero_boundary, 
         u_jp1[2:end] = A_CN \ B_CN * u_j[2:end]
 
         # Boundary conditions
-        u_jp1[1] = boundary(0, t[j])
-        u_jp1[mx+1] = boundary(x[end], t[j])
+        u_jp1[1] = boundary(0, t[j], arg...)
+        u_jp1[mx+1] = boundary(x[end], t[j], arg...)
 
         # Save u_j at time t[j+1]
         u_j = u_jp1

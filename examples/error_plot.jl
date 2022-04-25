@@ -1,4 +1,10 @@
-using .SciCompToolkit
+# Import Subsystems
+include("../examples/example_functions.jl")
+include("../finite_difference.jl")
+include("../numerical_continuation.jl")
+include("../numerical_shooting.jl")
+include("../ode_solver.jl")
+include("../visualisation.jl")
 using PlotlyJS
 
 x0 = [1]
@@ -54,7 +60,6 @@ t1 = scatter(x = Δt_max, y = euler_error, mode = "lines", name = "Euler")
 t2 = scatter(x = Δt_max, y = ralston4_error, mode = "lines", name = "Ralston 4")
 
 t3 = scatter(x = Δt_max, y = heun3_error, mode = "lines", name = "Heun 3")
-
 
 t4 = scatter(x = Δt_max, y = three_eighths_rule_error, mode = "lines", name = "3/8 rule")
 

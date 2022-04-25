@@ -1,5 +1,10 @@
+# Import Subsystems
 include("../examples/example_functions.jl")
+include("../finite_difference.jl")
 include("../numerical_continuation.jl")
+include("../numerical_shooting.jl")
+include("../ode_solver.jl")
+include("../visualisation.jl")
 
 
 # Excercise 1
