@@ -1,13 +1,7 @@
+using .SciCompToolkit
 using PlotlyJS
 using Test
 using ProgressMeter
-
-include("../ode_solver.jl")
-include("../numerical_continuation.jl")
-include("../numerical_shooting.jl")
-include("../examples/example_functions.jl")
-include("../visualisation.jl")
-include("../finite_difference.jl")
 
 
 """
@@ -25,7 +19,6 @@ save_figures_3d = true
 """
 Run the tests !
 """
-
 
 test = ProgressUnknown("Performing System Unit Tests: ", spinner=true)
 
