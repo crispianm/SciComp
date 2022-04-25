@@ -91,7 +91,8 @@ function pseudo_arclength(f, u0, T, par_values, discretisation; arg...)
 
         # Find the pseudo-arclength estimate
         v_pred = v1 + secant
-        sol = nlsolve(
+        sol =
+            nlsolve(
                 (v2) -> [discretisation(v2[:, 2:end], v2[1]) pseudo_arclength_eq(
                     secant,
                     v2,
@@ -105,11 +106,6 @@ function pseudo_arclength(f, u0, T, par_values, discretisation; arg...)
         push!(new_par_values, sol[1])
 
         i += 1
-
-        if i > 10*length(par_values)
-            println("Warning: Pseudo-arclength method did not converge.")
-            break
-        end
     end
 
     return new_par_values, conditions
