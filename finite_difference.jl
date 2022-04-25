@@ -1,4 +1,3 @@
-using PlotlyJS
 using LinearAlgebra
 
 function zero_boundary(x, t, arg...)
