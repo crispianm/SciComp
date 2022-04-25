@@ -68,14 +68,14 @@ function pseudo_arclength(f, u0, T, par_values, discretisation; arg...)
             par_values, conditions: the parameter values and corresponding solutions.
     """
 
-    # Create a list of new parameter values to try
+    # Create a vector of new parameter values to try
     new_par_values = [par_values[1]; par_values[2]]
 
     # Check if the parameter difference is positive or negative 
     if par_values[end] - par_values[1] < 0
-        end_function = (value) -> value > par_values[end]
+        end_function = (value) -> value < par_values[1]
     else
-        end_function = (value) -> value < par_values[end]
+        end_function = (value) -> value > par_values[1]
     end
 
     # Use the first solution as an initial guess for the next
@@ -95,8 +95,7 @@ function pseudo_arclength(f, u0, T, par_values, discretisation; arg...)
 
         # Find the pseudo-arclength estimate
         v_pred = v1 + secant
-        sol =
-            nlsolve(
+        sol = nlsolve(
                 (v2) -> [discretisation(v2[:, 2:end], v2[1]) pseudo_arclength_eq(
                     secant,
                     v2,
@@ -105,13 +104,13 @@ function pseudo_arclength(f, u0, T, par_values, discretisation; arg...)
                 v_pred,
             ).zero
 
-        # Append the new condition and parameter value
+        # Append the new condition and parameter values
         conditions = [conditions; sol[:, 2:end]]
         push!(new_par_values, sol[1])
 
         i += 1
 
-        if i > 2 * length(par_values)
+        if i > 2*length(par_values)
             println("Warning: Pseudo-arclength method did not converge.")
             break
         end

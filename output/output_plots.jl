@@ -15,7 +15,7 @@ save_figures_3d = true
 save_html = true
 
 
-println("Generating output plots...")
+println("Generating output plots")
 
 """
 Plotting 
