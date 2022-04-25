@@ -1,7 +1,7 @@
 using PlotlyJS
 include("ode_solver.jl")
 
-function plot_ode(ode, u0, t, labels=["t" "x"], arg...)
+function plot_ode(ode, u0, t, labels = ["t" "x"], arg...)
 
     """
     Plots a provided ODE, ode, along time input t with initia condition(s) u0.
@@ -19,24 +19,22 @@ function plot_ode(ode, u0, t, labels=["t" "x"], arg...)
     """
 
     solution = solve_ode(ode, u0, t; arg...)
-    x = solution[:,1]
-    y = solution[:,2]
+    x = solution[:, 1]
+    y = solution[:, 2]
 
     # Create traces
-    rk4_x = scatter(x=t, y=x, mode="lines", name=labels[1], showlegend=true)
-    rk4_y = scatter(x=t, y=y, mode="lines", name=labels[2], showlegend=true)
+    rk4_x = scatter(x = t, y = x, mode = "lines", name = labels[1], showlegend = true)
+    rk4_y = scatter(x = t, y = y, mode = "lines", name = labels[2], showlegend = true)
 
 
-    layout = Layout(
-        xaxis_title = "time",
-        )
+    layout = Layout(xaxis_title = "time")
 
     plot([rk4_x, rk4_y], layout)
 
 end
 
 
-function plot_ode_3d(ode, u0, t, labels=["u1" "u2" "u3"]; arg...)
+function plot_ode_3d(ode, u0, t, labels = ["u1" "u2" "u3"]; arg...)
 
     """
     Plots a provided ODE, ode, in 3d along time input t with initia condition(s) u0.
@@ -53,26 +51,24 @@ function plot_ode_3d(ode, u0, t, labels=["u1" "u2" "u3"]; arg...)
     """
 
     solution = solve_ode(ode, u0, t, arg...)
-    x = solution[:,1]
-    y = solution[:,2]
-    z = solution[:,3]
+    x = solution[:, 1]
+    y = solution[:, 2]
+    z = solution[:, 3]
 
     # Create traces
-    rk4_x = scatter(x=t, y=x, mode="lines", name=labels[1], showlegend=true)
-    rk4_y = scatter(x=t, y=y, mode="lines", name=labels[2], showlegend=true)
-    rk4_z = scatter(x=t, y=z, mode="lines", name=labels[3], showlegend=true)
+    rk4_x = scatter(x = t, y = x, mode = "lines", name = labels[1], showlegend = true)
+    rk4_y = scatter(x = t, y = y, mode = "lines", name = labels[2], showlegend = true)
+    rk4_z = scatter(x = t, y = z, mode = "lines", name = labels[3], showlegend = true)
 
 
-    layout = Layout(
-        xaxis_title = "time",
-        )
+    layout = Layout(xaxis_title = "time")
 
     plot([rk4_x, rk4_y, rk4_z], layout)
 
 end
 
 
-function plot_phase_portrait(ode, u0, t, axis_labels=["u1" "u2"], arg...)
+function plot_phase_portrait(ode, u0, t, axis_labels = ["u1" "u2"], arg...)
 
     """
     Plots a 2d phase portrait for a provided ODE, ode, along time input t
@@ -93,24 +89,21 @@ function plot_phase_portrait(ode, u0, t, axis_labels=["u1" "u2"], arg...)
 
     # Create trace
     rk4 = scatter(
-        x = solution[:,1],
-        y = solution[:,2],
-        mode="lines",
-        name="Phase portrait of ODE",
-        showlegend=true
-        )
+        x = solution[:, 1],
+        y = solution[:, 2],
+        mode = "lines",
+        name = "Phase portrait of ODE",
+        showlegend = true,
+    )
 
-    layout = Layout(
-        xaxis_title = axis_labels[1],
-        yaxis_title = axis_labels[2],
-        )
+    layout = Layout(xaxis_title = axis_labels[1], yaxis_title = axis_labels[2])
 
     plot([rk4], layout)
 
 end
 
 
-function plot_phase_portrait_3d(ode, u0, t, axis_labels=["u1" "u2" "u3"], arg...)
+function plot_phase_portrait_3d(ode, u0, t, axis_labels = ["u1" "u2" "u3"], arg...)
 
     """
     Plots a 3d phase portrait for a provided ODE, ode, along time input t
@@ -131,19 +124,19 @@ function plot_phase_portrait_3d(ode, u0, t, axis_labels=["u1" "u2" "u3"], arg...
 
     # Create trace
     rk4 = scatter(
-        x = solution[:,1],
-        y = solution[:,2],
-        z = solution[:,3],
-        mode="lines",
-        type="scatter3d"
-        )
+        x = solution[:, 1],
+        y = solution[:, 2],
+        z = solution[:, 3],
+        mode = "lines",
+        type = "scatter3d",
+    )
 
     layout = Layout(
-        margin=attr(l=0, r=0, b=0, t=0),
+        margin = attr(l = 0, r = 0, b = 0, t = 0),
         xaxis_title = axis_labels[1],
         yaxis_title = axis_labels[2],
         zaxis_title = axis_labels[3],
-        )
+    )
 
     plot([rk4], layout)
 

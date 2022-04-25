@@ -24,7 +24,7 @@ function np_continuation(f, u0, T, par_values, discretisation; arg...)
     conditions = nlsolve((u) -> discretisation(u, par_values[1]), u0).zero
     for parameter in par_values[2:end]
         # Solve using previous initial condition
-        x = nlsolve((u) -> discretisation(u, parameter), conditions[[end],:]).zero
+        x = nlsolve((u) -> discretisation(u, parameter), conditions[[end], :]).zero
         conditions = [conditions; x]
     end
 
@@ -67,7 +67,7 @@ function pseudo_arclength(f, u0, T, par_values, discretisation; arg...)
         Returns:
             par_values, conditions: the parameter values and corresponding solutions.
     """
-    
+
     # Create a list of new parameter values to try
     new_par_values = [par_values[1]; par_values[2]]
 
@@ -80,29 +80,38 @@ function pseudo_arclength(f, u0, T, par_values, discretisation; arg...)
 
     # Use the first solution as an initial guess for the next
     conditions = nlsolve((u) -> discretisation(u, par_values[1]), u0).zero
-    conditions = [conditions; nlsolve((u) -> discretisation(u, new_par_values[2]), conditions).zero]
+    conditions =
+        [conditions; nlsolve((u) -> discretisation(u, new_par_values[2]), conditions).zero]
 
     i = 1
     while end_function(new_par_values[end])
 
         # Define augmented state vectors
-        v0 = [new_par_values[i] conditions[[i],:]]
-        v1 = [new_par_values[i+1] conditions[[i+1],:]]
-        
+        v0 = [new_par_values[i] conditions[[i], :]]
+        v1 = [new_par_values[i+1] conditions[[i + 1], :]]
+
         # Find the secant
         secant = v1 - v0
-        
+
         # Find the pseudo-arclength estimate
         v_pred = v1 + secant
-        sol = nlsolve((v2) -> [discretisation(v2[:,2:end], v2[1]) pseudo_arclength_eq(secant, v2, v_pred)], v_pred).zero
-        
+        sol =
+            nlsolve(
+                (v2) -> [discretisation(v2[:, 2:end], v2[1]) pseudo_arclength_eq(
+                    secant,
+                    v2,
+                    v_pred,
+                )],
+                v_pred,
+            ).zero
+
         # Append the new condition and parameter value
-        conditions = [conditions; sol[:,2:end]]
+        conditions = [conditions; sol[:, 2:end]]
         push!(new_par_values, sol[1])
 
         i += 1
 
-        if i > 2*length(par_values)
+        if i > 2 * length(par_values)
             println("Warning: Pseudo-arclength method did not converge.")
             break
         end
@@ -112,8 +121,17 @@ function pseudo_arclength(f, u0, T, par_values, discretisation; arg...)
 end
 
 
-function continuation(f, u0, T, parameter, par_values; method="pseudo_arclength", discretisation="shooting", arg...)
-    
+function continuation(
+    f,
+    u0,
+    T,
+    parameter,
+    par_values;
+    method = "pseudo_arclength",
+    discretisation = "shooting",
+    arg...,
+)
+
     """
     Finds a function's solution for each a range of parameter values.
 
@@ -142,9 +160,13 @@ function continuation(f, u0, T, parameter, par_values; method="pseudo_arclength"
 
     ## Error handling
     if !isa(u0, Array)
-        error("Please make sure the initial condition is a 1 x n matrix.\neg: [1] or [1 1].")
+        error(
+            "Please make sure the initial condition is a 1 x n matrix.\neg: [1] or [1 1].",
+        )
     elseif size(u0)[1] != 1
-        error("Please make sure the initial condition is a 1 x n matrix.\neg: [1] or [1 1].")
+        error(
+            "Please make sure the initial condition is a 1 x n matrix.\neg: [1] or [1 1].",
+        )
     elseif !isa(parameter, String)
         error("Please enter a string for the phase index.")
     elseif !isa(discretisation, String)
@@ -156,9 +178,9 @@ function continuation(f, u0, T, parameter, par_values; method="pseudo_arclength"
     end
 
     # Check par_values is a range.
-    try 
-        step(par_values);
-    catch 
+    try
+        step(par_values)
+    catch
         error("Please enter a range for the parameter values.")
     end
 
@@ -177,7 +199,7 @@ function continuation(f, u0, T, parameter, par_values; method="pseudo_arclength"
     end
 
     # Check method is allowed
-    allowable_methods = ["pseudo_arclength","pa","natural_parameter_continuation","npc"]
+    allowable_methods = ["pseudo_arclength", "pa", "natural_parameter_continuation", "npc"]
     if string(method) ∉ allowable_methods
         error("Method not assigned, please enter either:
         pseudo_arclength or natural_parameter_continuation.")
@@ -185,50 +207,50 @@ function continuation(f, u0, T, parameter, par_values; method="pseudo_arclength"
 
     # convert any potential ints to floats for use in nlsolve
     u0 = [u0 T]
-    u0 = [Float64(number) for number in u0] 
-    par_values = [Float64(value) for value in par_values] 
-    
+    u0 = [Float64(number) for number in u0]
+    par_values = [Float64(value) for value in par_values]
+
     # Handle parameter and discretisation assignment
     if discretisation == "shooting"
 
         if parameter == "a"
-            discretisation = (u0, par) -> shoot(f, u0, phase_index=0, a=par)
+            discretisation = (u0, par) -> shoot(f, u0, phase_index = 0, a = par)
         elseif parameter == "alpha"
-            discretisation = (u0, par) -> shoot(f, u0, phase_index=0, alpha=par)
+            discretisation = (u0, par) -> shoot(f, u0, phase_index = 0, alpha = par)
         elseif parameter == "b"
-            discretisation = (u0, par) -> shoot(f, u0, phase_index=0, b=par)
+            discretisation = (u0, par) -> shoot(f, u0, phase_index = 0, b = par)
         elseif parameter == "beta"
-            discretisation = (u0, par) -> shoot(f, u0, phase_index=0, beta=par)
+            discretisation = (u0, par) -> shoot(f, u0, phase_index = 0, beta = par)
         elseif parameter == "c"
-            discretisation = (u0, par) -> shoot(f, u0, phase_index=0, c=par)
+            discretisation = (u0, par) -> shoot(f, u0, phase_index = 0, c = par)
         elseif parameter == "d"
-            discretisation = (u0, par) -> shoot(f, u0, phase_index=0, d=par)
+            discretisation = (u0, par) -> shoot(f, u0, phase_index = 0, d = par)
         elseif parameter == "delta"
-            discretisation = (u0, par) -> shoot(f, u0, phase_index=0, delta=par)
+            discretisation = (u0, par) -> shoot(f, u0, phase_index = 0, delta = par)
         elseif parameter == "sigma"
-            discretisation = (u0, par) -> shoot(f, u0, phase_index=0, sigma=par)
+            discretisation = (u0, par) -> shoot(f, u0, phase_index = 0, sigma = par)
         end
 
     elseif discretisation == "none"
-        
+
         if parameter == "a"
-            discretisation = (u0, par) -> f(u0, a=par)
+            discretisation = (u0, par) -> f(u0, a = par)
         elseif parameter == "alpha"
-            discretisation = (u0, par) -> f(u0, alpha=par)
+            discretisation = (u0, par) -> f(u0, alpha = par)
         elseif parameter == "b"
-            discretisation = (u0, par) -> f(u0, b=par)
+            discretisation = (u0, par) -> f(u0, b = par)
         elseif parameter == "beta"
-            discretisation = (u0, par) -> f(u0, beta=par)
+            discretisation = (u0, par) -> f(u0, beta = par)
         elseif parameter == "c"
-            discretisation = (u0, par) -> f(u0, c=par)
+            discretisation = (u0, par) -> f(u0, c = par)
         elseif parameter == "d"
-            discretisation = (u0, par) -> f(u0, d=par)
+            discretisation = (u0, par) -> f(u0, d = par)
         elseif parameter == "delta"
-            discretisation = (u0, par) -> f(u0, delta=par)
+            discretisation = (u0, par) -> f(u0, delta = par)
         elseif parameter == "sigma"
-            discretisation = (u0, par) -> f(u0, sigma=par)
+            discretisation = (u0, par) -> f(u0, sigma = par)
         end
-       
+
     else
         error("Invalid discretisation.")
     end
@@ -243,6 +265,6 @@ function continuation(f, u0, T, parameter, par_values; method="pseudo_arclength"
     else
         error("Unknown method: ", method)
     end
-    
+
     return new_par_values, conditions
 end

@@ -1,27 +1,14 @@
 module SciCompToolkit
 
 # Packages
-using PlotlyJS
-using NLsolve
-using ForwardDiff
-using Test
-using LinearAlgebra
-using ProgressMeter
 using ExportAll
-using Pkg
+using ForwardDiff
+using LinearAlgebra
+using NLsolve
+using PlotlyJS
+using ProgressMeter
+using Test
 
-dependencies = [
-    "ExportAll",
-    "ForwardDiff",
-    "IJulia",
-    "LinearAlgebra",
-    "NLsolve",
-    "PlotlyJS",
-    "ProgressMeter",
-    "Test",
-]
-
-Pkg.add(dependencies)
 
 # Subsystems
 include("./examples/example_functions.jl")

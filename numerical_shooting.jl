@@ -19,11 +19,11 @@ function G(f, u0, t0, T; arg...)
 
     F = solve_ode(f, u0, [t0 T]; arg...)
     g = u0 .- F[[end], :]
-    
+
     return g
 end
 
-function shoot(f, u; phase_index=0, arg...)
+function shoot(f, u; phase_index = 0, arg...)
 
     """
     Defines the system to be solved using in find_limit_cycle.
@@ -41,17 +41,17 @@ function shoot(f, u; phase_index=0, arg...)
             shoot(hopf2d, [1 1 20], phase_index = 0)
     """
 
-    u0 = u[:, 1:end .!= end]
+    u0 = u[:, 1:end.!=end]
     T = u[end]
-    
+
     G_estimate = G(f, u0, 0, T; arg...)
     phase_condition = f(u0, 0; arg...)[phase_index+1]
-    
+
     return [G_estimate phase_condition]
 end
 
 
-function find_limit_cycle(f, u0, T; phase_index=0, arg...)
+function find_limit_cycle(f, u0, T; phase_index = 0, arg...)
 
     """
     Finds u0 and T such that the phase condition of f is satisfied.
@@ -72,9 +72,13 @@ function find_limit_cycle(f, u0, T; phase_index=0, arg...)
 
     # Error handling
     if !isa(u0, Array)
-        error("Please make sure the initial condition is a 1 x n matrix.\neg: [1] or [1 1].")
+        error(
+            "Please make sure the initial condition is a 1 x n matrix.\neg: [1] or [1 1].",
+        )
     elseif size(u0)[1] != 1
-        error("Please make sure the initial condition is a 1 x n matrix.\neg: [1] or [1 1].")
+        error(
+            "Please make sure the initial condition is a 1 x n matrix.\neg: [1] or [1 1].",
+        )
     elseif !isa(phase_index, Int)
         error("Please enter an integer for the phase index.")
     elseif phase_index < 0
