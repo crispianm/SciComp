@@ -71,13 +71,16 @@ function pseudo_arclength(f, u0, T, par_values, discretisation; arg...)
     # Create a vector of new parameter values to try
     new_par_values = [par_values[1]; par_values[2]]
 
+    # Anonymous function to check if the parameter difference is in the range of par_values
+    is_in_range = (value) -> xor(value < par_values[end], value < par_values[1])
+
     # Use the first solution as an initial guess for the next
     conditions = nlsolve((u) -> discretisation(u, par_values[1]), u0).zero
     conditions =
         [conditions; nlsolve((u) -> discretisation(u, new_par_values[2]), conditions).zero]
 
     i = 1
-    while xor(new_par_values[end] < par_values[end], new_par_values[end] < par_values[1])
+    while is_in_range(new_par_values[end])
 
         # Define augmented state vectors
         v0 = [new_par_values[i] conditions[[i], :]]
