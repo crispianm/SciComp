@@ -71,20 +71,13 @@ function pseudo_arclength(f, u0, T, par_values, discretisation; arg...)
     # Create a vector of new parameter values to try
     new_par_values = [par_values[1]; par_values[2]]
 
-    # Check if the parameter difference is positive or negative 
-    if par_values[end] - par_values[1] < 0
-        end_function = (value) -> value < par_values[1]
-    else
-        end_function = (value) -> value > par_values[1]
-    end
-
     # Use the first solution as an initial guess for the next
     conditions = nlsolve((u) -> discretisation(u, par_values[1]), u0).zero
     conditions =
         [conditions; nlsolve((u) -> discretisation(u, new_par_values[2]), conditions).zero]
 
     i = 1
-    while end_function(new_par_values[end])
+    while xor(new_par_values[end] < par_values[end], new_par_values[end] < par_values[1])
 
         # Define augmented state vectors
         v0 = [new_par_values[i] conditions[[i], :]]
@@ -110,7 +103,7 @@ function pseudo_arclength(f, u0, T, par_values, discretisation; arg...)
 
         i += 1
 
-        if i > 2*length(par_values)
+        if i > 10*length(par_values)
             println("Warning: Pseudo-arclength method did not converge.")
             break
         end
