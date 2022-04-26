@@ -1,6 +1,6 @@
 using NLsolve
 using LinearAlgebra
-include("./numerical_shooting.jl")
+include("./NumericalShooting.jl")
 
 
 function np_continuation(f, u0, T, par_values, discretisation; arg...)

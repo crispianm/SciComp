@@ -1,5 +1,9 @@
+include("./FiniteDifference.jl")
+include("./NumericalContinuation.jl")
+include("./NumericalShooting.jl")
+include("./ODESolver.jl")
 using PlotlyJS
-include("ode_solver.jl")
+
 
 function plot_ode(ode, u0, t, labels = ["t" "x"], arg...)
 
@@ -23,21 +27,27 @@ function plot_ode(ode, u0, t, labels = ["t" "x"], arg...)
     y = solution[:, 2]
 
     # Create traces
-    rk4_x = scatter(x = t, y = x, mode = "lines", name = labels[1], showlegend = true)
-    rk4_y = scatter(x = t, y = y, mode = "lines", name = labels[2], showlegend = true)
+    conditions_x =
+        scatter(x = t, y = x, mode = "lines", name = labels[1], showlegend = true)
+    conditions_y =
+        scatter(x = t, y = y, mode = "lines", name = labels[2], showlegend = true)
 
 
-    layout = Layout(xaxis_title = "time")
+    layout = Layout(
+        xaxis_title = "time",
+        title = string("Time series plot of ODE: ", ode);
+        arg...
+    )
 
-    plot([rk4_x, rk4_y], layout)
+    plot([conditions_x, conditions_y], layout)
 
 end
 
 
-function plot_ode_3d(ode, u0, t, labels = ["u1" "u2" "u3"]; arg...)
+function plot_3d_ode(ode, u0, t, labels = ["u1" "u2" "u3"]; arg...)
 
     """
-    Plots a provided ODE, ode, in 3d along time input t with initia condition(s) u0.
+    Plots a provided 3d ODE, ode, along time input t with initia condition(s) u0.
     
     Parameters:
         ode (function): Function which returns a singular value or 1 x n matrix of values.
@@ -56,14 +66,21 @@ function plot_ode_3d(ode, u0, t, labels = ["u1" "u2" "u3"]; arg...)
     z = solution[:, 3]
 
     # Create traces
-    rk4_x = scatter(x = t, y = x, mode = "lines", name = labels[1], showlegend = true)
-    rk4_y = scatter(x = t, y = y, mode = "lines", name = labels[2], showlegend = true)
-    rk4_z = scatter(x = t, y = z, mode = "lines", name = labels[3], showlegend = true)
+    conditions_x =
+        scatter(x = t, y = x, mode = "lines", name = labels[1], showlegend = true)
+    conditions_y =
+        scatter(x = t, y = y, mode = "lines", name = labels[2], showlegend = true)
+    conditions_z =
+        scatter(x = t, y = z, mode = "lines", name = labels[3], showlegend = true)
 
 
-    layout = Layout(xaxis_title = "time")
+    layout = Layout(
+        xaxis_title = "time",
+        title = string("Time series plot of ODE: ", ode);
+        arg...
+    )
 
-    plot([rk4_x, rk4_y, rk4_z], layout)
+    plot([conditions_x, conditions_y, conditions_z], layout)
 
 end
 
@@ -88,17 +105,20 @@ function plot_phase_portrait(ode, u0, t, axis_labels = ["u1" "u2"], arg...)
     solution = solve_ode(ode, u0, t; arg...)
 
     # Create trace
-    rk4 = scatter(
+    conditions = scatter(
         x = solution[:, 1],
         y = solution[:, 2],
         mode = "lines",
-        name = "Phase portrait of ODE",
-        showlegend = true,
     )
 
-    layout = Layout(xaxis_title = axis_labels[1], yaxis_title = axis_labels[2])
+    layout = Layout(
+        xaxis_title = axis_labels[1],
+        yaxis_title = axis_labels[2],
+        title = string("Phase portrait of ODE: ", ode);
+        arg...
+    )
 
-    plot([rk4], layout)
+    plot([conditions], layout)
 
 end
 
@@ -123,7 +143,7 @@ function plot_phase_portrait_3d(ode, u0, t, axis_labels = ["u1" "u2" "u3"], arg.
     solution = solve_ode(ode, u0, t; arg...)
 
     # Create trace
-    rk4 = scatter(
+    conditions = scatter(
         x = solution[:, 1],
         y = solution[:, 2],
         z = solution[:, 3],
@@ -136,9 +156,53 @@ function plot_phase_portrait_3d(ode, u0, t, axis_labels = ["u1" "u2" "u3"], arg.
         xaxis_title = axis_labels[1],
         yaxis_title = axis_labels[2],
         zaxis_title = axis_labels[3],
+        title = string("3d phase portrait of ODE: ", ode);
+        arg...
     )
 
-    plot([rk4], layout)
+    plot([conditions], layout)
 
 end
 
+
+function plot_continuation(ode, u0, T, parameter, par_values; labels = ["u1" "u2"], arg...)
+
+    """
+    Plots a provided ODE, ode, along parameter input 'parameter' with initia condition(s) u0.
+    
+    Parameters:
+            ode (function): Function which returns a singular value or 1 x n matrix of values.
+            u0 (matrix): Matrix of initial values in the 1 x n form, eg: [1] or [1 1].
+            T (float): Initial guess for the period.
+            parameter (string): The parameter in the system to vary.
+                Allowable parameter inputs:
+                    "a", "alpha", "b", "beta", "c", "d", "delta", "sigma"
+            par_values (range): Parameter values to solve between, made with colons, eg: 0:0.1:2.
+            arg (list, optional): Arguments to pass to f or continuation e.g method or discretisation.
+    
+    Returns:
+        A plot of the initial conditions u1 and u2 at parameter value in par_values.
+    """
+
+    par_values, conditions = continuation(ode, u0, T, parameter, par_values; arg...)
+
+    # Create traces
+    u1 = scatter(x = par_values, y = conditions[:, 1], mode = "lines", name = labels[1])
+    u2 = scatter(x = par_values, y = conditions[:, 2], mode = "lines", name = labels[2])
+
+
+    layout = Layout(
+        xaxis_title = string("Parameter: ", parameter);
+        arg...
+    )
+
+    plot([u1, u2], layout)
+
+end
+
+
+function plot_finite_difference()
+
+    
+
+end

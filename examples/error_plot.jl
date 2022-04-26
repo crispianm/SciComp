@@ -1,10 +1,10 @@
-# Import Subsystems
+# Import All Subsystems
 include("../examples/example_functions.jl")
-include("../finite_difference.jl")
-include("../numerical_continuation.jl")
-include("../numerical_shooting.jl")
-include("../ode_solver.jl")
-include("../visualisation.jl")
+include("../src/FiniteDifference.jl")
+include("../src/NumericalContinuation.jl")
+include("../src/NumericalShooting.jl")
+include("../src/ODESolver.jl")
+include("../src/Visualisation.jl")
 using PlotlyJS
 
 x0 = [1]
@@ -13,6 +13,8 @@ t = [0 1]
 real = ℯ
 
 println("For Δt = 0.001: ")
+
+# Create initial estimates
 # Euler estimate of x(1)
 solution = solve_ode(f, x0, t; method = "euler", Δt = 0.001)
 println("\tEuler approximation = \t\t", solution[end][1])

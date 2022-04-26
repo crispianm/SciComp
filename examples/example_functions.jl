@@ -172,7 +172,7 @@ end
 Finite Difference Functions
 """
 
-# initial temperature distribution
+# Example initial temperature distribution
 function u_I(x; L = 1.0, arg...)
 
     y = @. sin.(pi * x / L)
@@ -180,7 +180,7 @@ function u_I(x; L = 1.0, arg...)
     return y
 end
 
-# the exact solution
+# The exact solution of the above function
 function u_exact(x, t; L = 1.0, κ = 1.0, arg...)
 
     y = @. exp(-κ * ((pi / L)^2) * t) * sin(pi * x / L)

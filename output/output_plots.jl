@@ -1,15 +1,27 @@
-# Import Subsystems
+# Import All Subsystems
 include("../examples/example_functions.jl")
-include("../finite_difference.jl")
-include("../numerical_continuation.jl")
-include("../numerical_shooting.jl")
-include("../ode_solver.jl")
-include("../visualisation.jl")
+include("../src/FiniteDifference.jl")
+include("../src/NumericalContinuation.jl")
+include("../src/NumericalShooting.jl")
+include("../src/ODESolver.jl")
+include("../src/Visualisation.jl")
 using PlotlyJS
 
 
-# Set save_figures and save_figures_3d variables to true to save pngs to the output folder.
-# Set save_html to true to save figures as interactive html files
+"""
+Creates plotly graphs of various ODEs and PDEs from the example functions
+file, showing some of the capabilities of the software. The priority was on 
+making the plots as clear as possible, occasionally at some code readability
+or repetition cost (see Continuation Plot).
+
+It takes about 40-50 seconds to run if all figures are chosen to be generated.
+
+Set save_figures and save_figures_3d variables to true to save pngs to the output folder.
+Set save_html to true to save figures there as interactive html files, which are loads of fun.
+
+"""
+
+
 save_figures = true
 save_figures_3d = true
 save_html = true
@@ -30,7 +42,7 @@ if save_figures
     savefig(hopf_plot, "./output/Hopf Plot.png")
 
 
-    ## Plot 3d phase portrait
+    ## Plot Hopf phase portrait
     hopf_phase_portrait = plot_phase_portrait(hopf2d, u0, t, ["u1 (x)" "u2 (y)"])
     savefig(hopf_phase_portrait, "./output/Hopf Phase Portrait.png")
 
@@ -366,23 +378,23 @@ if save_figures_3d
     ## 3d Finite Difference method comparison plot
     kappa, L, T, mx, mt = 0.5, 1, 1, 10, 100
 
-    x = range(0, stop = L, length = mx + 1)
-    t = range(0.0001, stop = T, length = mt)
-
+    x = range(0, stop=L, length=mx+1)
+    t = range(0, stop=T, length=mt) .+ 0.0001
+    
     u_est = ones(mt)' .* x
-    v_est = t' .* ones(mx + 1)
-
-    fe_z = Matrix{Float64}(undef, mx + 1, mt)
-    be_z = Matrix{Float64}(undef, mx + 1, mt)
-    cn_z = Matrix{Float64}(undef, mx + 1, mt)
-
-    for i in range(1, mt)
-        fex, fe_uj = finite_difference(u_I, kappa, L, t[i], mx, mt, method = "fe")
-        fe_z[:, i] = fe_uj
-        bex, be_uj = finite_difference(u_I, kappa, L, t[i], mx, mt, method = "be")
-        be_z[:, i] = be_uj
-        cnx, cn_uj = finite_difference(u_I, kappa, L, t[i], mx, mt, method = "cn")
-        cn_z[:, i] = cn_uj
+    v_est = t' .* ones(mx+1)
+    
+    fe_z = Matrix{Float64}(undef, mx+1, mt)
+    be_z = Matrix{Float64}(undef, mx+1, mt)
+    cn_z = Matrix{Float64}(undef, mx+1, mt)
+    
+    for i in 1:mt
+        fex, fe_uj = finite_difference(u_I, kappa, L, t[i], mx, mt, method="fe")
+        fe_z[:,i] = fe_uj
+        bex, be_uj = finite_difference(u_I, kappa, L, t[i], mx, mt, method="be")
+        be_z[:,i] = be_uj
+        cnx, cn_uj = finite_difference(u_I, kappa, L, t[i], mx, mt, method="cn")
+        cn_z[:,i] = cn_uj
     end
 
     # Estimate Surfaces
