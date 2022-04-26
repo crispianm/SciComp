@@ -38,12 +38,12 @@ if save_figures
     ## Plot of ODE for t = 20
     t = 0:0.02:20
     u0 = [-1 0]
-    hopf_plot = plot_ode(hopf2d, u0, t, ["u1 (x)" "u2 (y)"])
+    hopf_plot = plot_ode(hopf2d, u0, t, labels=["u1 (x)" "u2 (y)"])
     savefig(hopf_plot, "./output/Hopf Plot.png")
 
 
     ## Plot Hopf phase portrait
-    hopf_phase_portrait = plot_phase_portrait(hopf2d, u0, t, ["u1 (x)" "u2 (y)"])
+    hopf_phase_portrait = plot_phase_portrait(hopf2d, u0, t, axis_labels=["u1 (x)" "u2 (y)"])
     savefig(hopf_phase_portrait, "./output/Hopf Phase Portrait.png")
 
 

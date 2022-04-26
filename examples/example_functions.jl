@@ -37,13 +37,12 @@ function f2(u, t, arg...)
         error("Please enter two initial conditions for the function.")
     end
 
-    x = u[1]
-    y = u[2]
+    u1, u2 = u
 
-    x_dot = y
-    y_dot = -x
-
-    return [x_dot y_dot]
+    du1dt = u2
+    du2dt = -u1
+    
+    return [du1dt du2dt]
 end
 
 function f2_solution(u, t, arg...)
@@ -71,8 +70,7 @@ function predprey(u, t; a = 1, b = 0.2, d = 0.1, arg...)
         error("Please enter two initial conditions for the function.")
     end
 
-    x = u[1]
-    y = u[2]
+    x, y = u
 
     x_dot = x .* (1 .- x) .- (a .* x .* y) ./ (d .+ x)
     y_dot = b .* y .* (1 .- (y ./ x))

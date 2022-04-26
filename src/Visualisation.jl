@@ -5,10 +5,10 @@ include("./ODESolver.jl")
 using PlotlyJS
 
 
-function plot_ode(ode, u0, t, labels = ["t" "x"], arg...)
+function plot_ode(ode, u0, t; labels = ["u1" "u2"], arg...)
 
     """
-    Plots a provided ODE, ode, along time input t with initia condition(s) u0.
+    Plots a provided 2d ODE, ode, along time input t with initia condition(s) u0.
     
     Parameters:
         ode (function): Function which returns a singular value or 1 x n matrix of values.
@@ -21,6 +21,10 @@ function plot_ode(ode, u0, t, labels = ["t" "x"], arg...)
     Returns:
         A plot of the solutions for x and y at each time value in t.
     """
+
+    if size(u0)[end] < 2
+        error("Please use a 2d system of equations.")
+    end
 
     solution = solve_ode(ode, u0, t; arg...)
     x = solution[:, 1]
@@ -44,7 +48,7 @@ function plot_ode(ode, u0, t, labels = ["t" "x"], arg...)
 end
 
 
-function plot_3d_ode(ode, u0, t, labels = ["u1" "u2" "u3"]; arg...)
+function plot_3d_ode(ode, u0, t; labels = ["u1" "u2" "u3"], arg...)
 
     """
     Plots a provided 3d ODE, ode, along time input t with initia condition(s) u0.
@@ -85,7 +89,7 @@ function plot_3d_ode(ode, u0, t, labels = ["u1" "u2" "u3"]; arg...)
 end
 
 
-function plot_phase_portrait(ode, u0, t, axis_labels = ["u1" "u2"], arg...)
+function plot_phase_portrait(ode, u0, t; axis_labels = ["u1" "u2"], arg...)
 
     """
     Plots a 2d phase portrait for a provided ODE, ode, along time input t
@@ -123,7 +127,7 @@ function plot_phase_portrait(ode, u0, t, axis_labels = ["u1" "u2"], arg...)
 end
 
 
-function plot_phase_portrait_3d(ode, u0, t, axis_labels = ["u1" "u2" "u3"], arg...)
+function plot_phase_portrait_3d(ode, u0, t; axis_labels = ["u1" "u2" "u3"], arg...)
 
     """
     Plots a 3d phase portrait for a provided ODE, ode, along time input t
@@ -152,7 +156,7 @@ function plot_phase_portrait_3d(ode, u0, t, axis_labels = ["u1" "u2" "u3"], arg.
     )
 
     layout = Layout(
-        margin = attr(l = 0, r = 0, b = 0, t = 0),
+        margin = attr(l = 0, r = 0, b = 0),
         xaxis_title = axis_labels[1],
         yaxis_title = axis_labels[2],
         zaxis_title = axis_labels[3],
@@ -192,7 +196,8 @@ function plot_continuation(ode, u0, T, parameter, par_values; labels = ["u1" "u2
 
 
     layout = Layout(
-        xaxis_title = string("Parameter: ", parameter);
+        xaxis_title = string("Parameter: ", parameter),
+        title = string("Numerical Continuation of ODE: ", ode);
         arg...
     )
 
@@ -200,9 +205,3 @@ function plot_continuation(ode, u0, T, parameter, par_values; labels = ["u1" "u2
 
 end
 
-
-function plot_finite_difference()
-
-    
-
-end
