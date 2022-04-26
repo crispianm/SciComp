@@ -23,6 +23,8 @@ Software suite of various numerical ODE and PDE solution methods, written in Jul
 **Track parameters in ODE systems using the pseudo-arclength method:**
 ![pseudo-arclength](https://user-images.githubusercontent.com/45373428/165290301-f1d15bb2-08b6-4034-abd3-7f8a34978895.png)
 
+**Analyse the effects of the diffusion PDE using finite difference:**
+![fd](https://user-images.githubusercontent.com/45373428/165399233-78cdb2fa-37c5-43e9-b03a-bad8be84be21.png)
 
 
 ## Installation
