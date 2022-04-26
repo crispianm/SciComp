@@ -13,11 +13,11 @@ Plot Phase portraits in 3d:
 
 
 Perform numerical shooting and find limit cycles:
-![predprey-phase-portrait](https://user-images.githubusercontent.com/45373428/165290265-32cf3e97-cf6e-43ee-b30a-60cf14b7ba52.png)
+![predprey-phase-portrait](https://user-images.githubusercontent.com/45373428/165292376-9de1c721-2716-47f2-b2a1-4bbe93de6213.png)
 
 
 Find bifurcations using numerical continuation:
-![predprey-continuation](https://user-images.githubusercontent.com/45373428/165290587-2d1907aa-b736-4daa-9ae0-9a6d7a624048.png)
+![predprey-continuation](https://user-images.githubusercontent.com/45373428/165292421-1a154555-78b6-4745-97f5-1e2f21dd5da0.png)
 
 
 Track parameters in ODE systems using the pseudo-arclength method:
