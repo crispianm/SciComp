@@ -5,7 +5,7 @@ function euler_step(f, x0, tn, Δt; arg...)
 
     Parameters:
     	f (function): Function which returns a singular value or 1 x n matrix of values.
-           x0 (matrix): Matrix of initial values in the 1 x n form, eg: [1] or [1 1].
+        x0 (matrix): Matrix of initial values in the 1 x n form, eg: [1] or [1 1].
     	tn (float): Starting value for Euler step.
     	Δt (float): Step size.
     	arg (list, optional): Arguments to pass to f.
@@ -27,7 +27,7 @@ function heun3_step(f, x0, tn, Δt; arg...)
 
     Parameters:
     	f (function): Function which returns a singular value or 1 x n matrix of values.
-           x0 (matrix): Matrix of initial values in the 1 x n form, eg: [1] or [1 1].
+        x0 (matrix): Matrix of initial values in the 1 x n form, eg: [1] or [1 1].
     	tn (float): Starting value for Euler step.
     	Δt (float): Step size.
     	arg (list, optional): Arguments to pass to f.
@@ -53,7 +53,7 @@ function ralston4_step(f, x0, tn, Δt; arg...)
 
     Parameters:
     	f (function): Function which returns a singular value or 1 x n matrix of values.
-           x0 (matrix): Matrix of initial values in the 1 x n form, eg: [1] or [1 1].
+        x0 (matrix): Matrix of initial values in the 1 x n form, eg: [1] or [1 1].
     	tn (float): Starting value for Euler step.
     	Δt (float): Step size.
     	arg (list, optional): Arguments to pass to f.
@@ -85,7 +85,7 @@ function rk4_step(f, x0, tn, Δt; arg...)
 
     Parameters:
     	f (function): Function which returns a singular value or 1 x n matrix of values.
-           x0 (matrix): Matrix of initial values in the 1 x n form, eg: [1] or [1 1].
+        x0 (matrix): Matrix of initial values in the 1 x n form, eg: [1] or [1 1].
     	tn (float): Starting value for Euler step.
     	Δt (float): Step size.
     	arg (list, optional): Arguments to pass to f.
@@ -112,7 +112,7 @@ function three_eighths_rule_step(f, x0, tn, Δt; arg...)
 
     Parameters:
     	f (function): Function which returns a singular value or 1 x n matrix of values.
-           x0 (matrix): Matrix of initial values in the 1 x n form, eg: [1] or [1 1].
+        x0 (matrix): Matrix of initial values in the 1 x n form, eg: [1] or [1 1].
     	tn (float): Starting value for Euler step.
     	Δt (float): Step size.
     	arg (list, optional): Arguments to pass to f.
@@ -139,9 +139,9 @@ function solve_to(f, x0, t1, t2, Δt, method; arg...)
 
     Parameters:
     	f (function): Function which returns a singular value or 1 x n matrix of values.
-           x0 (matrix): Matrix of initial values in the 1 x n form, eg: [1] or [1 1].
+        x0 (matrix): Matrix of initial values in the 1 x n form, eg: [1] or [1 1].
     	t1 (float): Starting time.
-           t2 (float): Ending time.
+        t2 (float): Ending time.
     	Δt (float): Step size.
            method (function): method used to approximate solution
                Allowable methods:

@@ -96,7 +96,7 @@ function backward_euler(u_initial, λ, mx, mt, x, t; boundary = zero_boundary, a
 
     # Solve the PDE: loop over all time points
     for j = 1:mt
-        # Forward Euler timestep at inner mesh points
+        # Backward Euler timestep at inner mesh points
         # PDE discretised at position x[i], time t[j]
         u_jp1[2:end] = A_BE \ u_j[2:end]
 
@@ -145,7 +145,7 @@ function crank_nicholson(u_initial, λ, mx, mt, x, t; boundary = zero_boundary, 
 
     # Solve the PDE: loop over all time points
     for j = 1:mt
-        # Forward Euler timestep at inner mesh points
+        # Crank Nicholson timestep at inner mesh points
         # PDE discretised at position x[i], time t[j]
         u_jp1[2:end] = A_CN \ B_CN * u_j[2:end]
 
@@ -191,6 +191,9 @@ function finite_difference(
 
         Returns:
             x_est, u_j: The values of u at each x over time T.
+        
+        Example Usage:
+            finite_difference(u_I, 0.5, 1, 1, 10, 100, method="forward_euler")
     """
 
     ## Error handling
