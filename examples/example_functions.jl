@@ -4,7 +4,7 @@
 dx/dt = x
 """
 
-function f(u, t, arg...)
+function f(u, t; arg...)
 
     if size(u)[end] != 1
         error("Please enter only one initial condition for the function.")
@@ -13,7 +13,7 @@ function f(u, t, arg...)
     return u
 end
 
-function f_solution(u, t, arg...)
+function f_solution(u, t; arg...)
 
     if size(u)[end] != 1
         error("Please enter only one initial condition for the function.")
@@ -31,7 +31,7 @@ and
     dy/dt = -x.
 """
 
-function f2(u, t, arg...)
+function f2(u, t; arg...)
 
     if size(u)[end] != 2
         error("Please enter two initial conditions for the function.")
@@ -45,7 +45,7 @@ function f2(u, t, arg...)
     return [du1dt du2dt]
 end
 
-function f2_solution(u, t, arg...)
+function f2_solution(u, t; arg...)
 
     c1, c2 = u
 
