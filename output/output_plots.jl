@@ -43,7 +43,7 @@ if save_figures
 
 
     ## Plot Hopf phase portrait
-    hopf_phase_portrait = plot_phase_portrait(hopf2d, u0, t, axis_labels=["u1 (x)" "u2 (y)"])
+    hopf_phase_portrait = plot_phase_portrait(hopf2d, u0, t, labels=["u1 (x)" "u2 (y)"])
     savefig(hopf_phase_portrait, "./output/Hopf Phase Portrait.png")
 
 

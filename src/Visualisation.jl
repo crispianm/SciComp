@@ -5,16 +5,15 @@ include("./ODESolver.jl")
 using PlotlyJS
 
 
-function plot_ode(ode, u0, t; labels = ["u1" "u2"], arg...)
+function plot_ode(ode, u0, t; labels = [string("u",i) for i in 1:length(u0)], arg...)
 
     """
-    Plots a provided 2d ODE, ode, along time input t with initia condition(s) u0.
+    Plots a provided n-d ODE, ode, along time input t with initial condition(s) u0.
     
     Parameters:
         ode (function): Function which returns a singular value or 1 x n matrix of values.
         u0 (matrix): Matrix of initial values in the 1 x n form, eg: [1] or [1 1].
         t (array or range): Time values to solve between. The first element of t should be the initial value, 0.
-        labels (array, optional): Labels for the x and y axes.
         labels (array, optional): Labels for the x and y components to plot.
         arg (list, optional): Arguments to pass to f.
     
@@ -22,74 +21,36 @@ function plot_ode(ode, u0, t; labels = ["u1" "u2"], arg...)
         A plot of the solutions for x and y at each time value in t.
     """
 
-    if size(u0)[end] < 2
-        error("Please use a 2d system of equations.")
+    if size(u0)[2] != length(labels)
+        error("Please enter the same number of labels as initial conditions.")
     end
 
     solution = solve_ode(ode, u0, t; arg...)
-    x = solution[:, 1]
-    y = solution[:, 2]
 
-    # Create traces
-    conditions_x =
-        scatter(x = t, y = x, mode = "lines", name = labels[1], showlegend = true)
-    conditions_y =
-        scatter(x = t, y = y, mode = "lines", name = labels[2], showlegend = true)
+    plots = GenericTrace[]
+    for i in 1:size(u0)[2]
 
+        # Calculate solution
+        y = solution[:, i]
+
+        # Create trace and append
+        conditions = scatter(x = t, y = y, mode = "lines", name = labels[i], showlegend = true)
+        push!(plots, conditions)
+
+    end
 
     layout = Layout(
         xaxis_title = "time",
-        title = string("Time series plot of ODE: ", ode);
+        title = string("Time series plot of ODE system: ", ode);
         arg...
     )
 
-    plot([conditions_x, conditions_y], layout)
+    plot(plots, layout)
 
 end
 
 
-function plot_3d_ode(ode, u0, t; labels = ["u1" "u2" "u3"], arg...)
-
-    """
-    Plots a provided 3d ODE, ode, along time input t with initia condition(s) u0.
-    
-    Parameters:
-        ode (function): Function which returns a singular value or 1 x n matrix of values.
-        u0 (matrix): Matrix of initial values in the 1 x n form, eg: [1] or [1 1].
-        t (array or range): Time values to solve between. The first element of t should be the initial value, 0.
-        labels (array, optional): Labels for the x, y, and z components to plot.
-        arg (list, optional): Arguments to pass to f.
-    
-    Returns:
-        A plot of the solutions for x, y, and z at each time value in t.
-    """
-
-    solution = solve_ode(ode, u0, t, arg...)
-    x = solution[:, 1]
-    y = solution[:, 2]
-    z = solution[:, 3]
-
-    # Create traces
-    conditions_x =
-        scatter(x = t, y = x, mode = "lines", name = labels[1], showlegend = true)
-    conditions_y =
-        scatter(x = t, y = y, mode = "lines", name = labels[2], showlegend = true)
-    conditions_z =
-        scatter(x = t, y = z, mode = "lines", name = labels[3], showlegend = true)
-
-
-    layout = Layout(
-        xaxis_title = "time",
-        title = string("Time series plot of ODE: ", ode);
-        arg...
-    )
-
-    plot([conditions_x, conditions_y, conditions_z], layout)
-
-end
-
-
-function plot_phase_portrait(ode, u0, t; axis_labels = ["u1" "u2"], arg...)
+function plot_phase_portrait(ode, u0, t; labels = ["u1" "u2"], arg...)
 
     """
     Plots a 2d phase portrait for a provided ODE, ode, along time input t
@@ -99,7 +60,7 @@ function plot_phase_portrait(ode, u0, t; axis_labels = ["u1" "u2"], arg...)
         ode (function): Function which returns a singular value or 1 x n matrix of values.
         u0 (matrix): Matrix of initial values in the 1 x n form, eg: [1] or [1 1].
         t (array or range): Time values to solve between. The first element of t should be the initial value, 0.
-        axis_labels (array, optional): Labels for the x and y axes.
+        labels (array, optional): Labels for the x and y axes.
         arg (list, optional): Arguments to pass to f.
     
     Returns:
@@ -116,9 +77,9 @@ function plot_phase_portrait(ode, u0, t; axis_labels = ["u1" "u2"], arg...)
     )
 
     layout = Layout(
-        xaxis_title = axis_labels[1],
-        yaxis_title = axis_labels[2],
-        title = string("Phase portrait of ODE: ", ode);
+        xaxis_title = labels[1],
+        yaxis_title = labels[2],
+        title = string("Phase portrait of ODE system: ", ode);
         arg...
     )
 
@@ -127,7 +88,7 @@ function plot_phase_portrait(ode, u0, t; axis_labels = ["u1" "u2"], arg...)
 end
 
 
-function plot_phase_portrait_3d(ode, u0, t; axis_labels = ["u1" "u2" "u3"], arg...)
+function plot_phase_portrait_3d(ode, u0, t; labels = ["u1" "u2" "u3"], arg...)
 
     """
     Plots a 3d phase portrait for a provided ODE, ode, along time input t
@@ -137,7 +98,7 @@ function plot_phase_portrait_3d(ode, u0, t; axis_labels = ["u1" "u2" "u3"], arg.
         ode (function): Function which returns a singular value or 1 x n matrix of values.
         u0 (matrix): Matrix of initial values in the 1 x n form, eg: [1] or [1 1].
         t (array or range): Time values to solve between. The first element of t should be the initial value, 0.
-        axis_labels (array, optional): Labels for the x and y axes.
+        labels (array, optional): Labels for the x and y axes.
         arg (list, optional): Arguments to pass to f.
     
     Returns:
@@ -157,10 +118,10 @@ function plot_phase_portrait_3d(ode, u0, t; axis_labels = ["u1" "u2" "u3"], arg.
 
     layout = Layout(
         margin = attr(l = 0, r = 0, b = 0),
-        xaxis_title = axis_labels[1],
-        yaxis_title = axis_labels[2],
-        zaxis_title = axis_labels[3],
-        title = string("3d phase portrait of ODE: ", ode);
+        xaxis_title = labels[1],
+        yaxis_title = labels[2],
+        zaxis_title = labels[3],
+        title = string("3d phase portrait of ODE system: ", ode);
         arg...
     )
 
@@ -197,7 +158,7 @@ function plot_continuation(ode, u0, T, parameter, par_values; labels = ["u1" "u2
 
     layout = Layout(
         xaxis_title = string("Parameter: ", parameter),
-        title = string("Numerical Continuation of ODE: ", ode);
+        title = string("Numerical Continuation of ODE system: ", ode);
         arg...
     )
 
