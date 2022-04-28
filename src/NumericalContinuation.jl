@@ -23,7 +23,7 @@ function np_continuation(f, u0, T, par_values, discretisation; arg...)
 
     conditions = nlsolve((u) -> discretisation(u, par_values[1]), u0).zero
     for parameter in par_values[2:end]
-        # Solve using previous initial condition
+        # Solve using previous solution as initial guess
         x = nlsolve((u) -> discretisation(u, parameter), conditions[[end], :]).zero
         conditions = [conditions; x]
     end
@@ -58,7 +58,7 @@ function pseudo_arclength(f, u0, T, par_values, discretisation; arg...)
 
         Parameters:
             f (function): Function which returns a singular value or 1 x n matrix of values.
-            u0 (matrix): Matrix of initial values in the 1 x n form, eg: [1] or [1 1].
+            u0 (matrix): Matrix of initial solution values in the 1 x n form, eg: [1] or [1 1].
             T (float): Initial guess for the period.
             par_values (range): Parameter values to solve between, made with colons, eg: 0:0.1:2.
             discretisation (anon. function): The discretisation to use, defined in the "continuation" function below.
@@ -79,12 +79,11 @@ function pseudo_arclength(f, u0, T, par_values, discretisation; arg...)
     conditions =
         [conditions; nlsolve((u) -> discretisation(u, new_par_values[2]), conditions).zero]
 
-    i = 1
     while is_in_range(new_par_values[end])
 
         # Define augmented state vectors
-        v0 = [new_par_values[i] conditions[[i], :]]
-        v1 = [new_par_values[i+1] conditions[[i + 1], :]]
+        v0 = [new_par_values[end-1] conditions[[end-1], :]]
+        v1 = [new_par_values[end] conditions[[end], :]]
 
         # Find the secant
         secant = v1 - v0
@@ -104,8 +103,6 @@ function pseudo_arclength(f, u0, T, par_values, discretisation; arg...)
         # Append the new condition and parameter values
         conditions = [conditions; sol[:, 2:end]]
         push!(new_par_values, sol[1])
-
-        i += 1
     end
 
     return new_par_values, conditions
@@ -128,7 +125,7 @@ function continuation(
 
         Parameters:
             f (function): Function which returns a singular value or 1 x n matrix of values.
-            u0 (matrix): Matrix of initial values in the 1 x n form, eg: [1] or [1 1].
+            u0 (matrix): Matrix of initial solution guess in the 1 x n form, eg: [1] or [1 1].
             T (float): Initial guess for the period.
             parameter (string): The parameter in the system to vary.
                 Allowable parameter inputs:
@@ -152,12 +149,13 @@ function continuation(
     ## Error handling
     if !isa(u0, Array)
         error(
-            "Please make sure the initial condition is a 1 x n matrix.\neg: [1] or [1 1].",
+            "Please make sure the initial guess is a 1 x n matrix.\neg: [1] or [1 1].",
         )
     elseif size(u0)[1] != 1
-        error(
-            "Please make sure the initial condition is a 1 x n matrix.\neg: [1] or [1 1].",
-        )
+        error(string(
+            "Please make sure the initial condition is a size 1 x n matrix, instead of a size ", size(u0), " ",typeof(u0),
+            "\neg: [1] or [1 1]."
+        ))
     elseif !isa(parameter, String)
         error("Please enter a string for the phase index.")
     elseif !isa(discretisation, String)

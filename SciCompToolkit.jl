@@ -12,11 +12,11 @@ using Test
 
 # Subsystems
 include("./examples/example_functions.jl")
-include("finite_difference.jl")
-include("numerical_continuation.jl")
-include("numerical_shooting.jl")
-include("ode_solver.jl")
-include("visualisation.jl")
+include("./src/FiniteDifference.jl")
+include("./src/NumericalContinuation.jl")
+include("./src/NumericalShooting.jl")
+include("./src/ODESolver.jl")
+include("./src/Visualisation.jl")
 
 # Export all functions
 @exportAll()

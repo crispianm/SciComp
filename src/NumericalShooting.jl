@@ -1,7 +1,7 @@
 using NLsolve
 include("ODESolver.jl")
 
-function G(f, u0, t0, T; arg...)
+function G(f, u0, T; arg...)
 
     """
     Solves the ODE, f, and returns u0 minus the solution.
@@ -9,7 +9,6 @@ function G(f, u0, t0, T; arg...)
         Parameters:
             f (function): Function which returns a singular value or 1 x n matrix of values.
             u0 (matrix): Matrix of initial values in the 1 x n form, eg: [1] or [1 1].
-            t0 (float): Initial time
             T (float): Period estimate
             arg (list, optional): Arguments to pass to f.
 
@@ -17,7 +16,7 @@ function G(f, u0, t0, T; arg...)
             u0 minus the solution of ODE f.
     """
 
-    F = solve_ode(f, u0, [t0 T]; arg...)
+    F = solve_ode(f, u0, [0 T]; arg...)
     g = u0 .- F[[end], :]
 
     return g
@@ -44,7 +43,11 @@ function shoot(f, u; phase_index = 0, arg...)
     u0 = u[:, 1:end.!=end]
     T = u[end]
 
-    G_estimate = G(f, u0, 0, T; arg...)
+    if T == 0
+        error("T cannot be 0.")
+    end
+
+    G_estimate = G(f, u0, T; arg...)
     phase_condition = f(u0, 0; arg...)[phase_index+1]
 
     return [G_estimate phase_condition]
@@ -76,9 +79,10 @@ function find_limit_cycle(f, u0, T; phase_index = 0, arg...)
             "Please make sure the initial condition is a 1 x n matrix.\neg: [1] or [1 1].",
         )
     elseif size(u0)[1] != 1
-        error(
-            "Please make sure the initial condition is a 1 x n matrix.\neg: [1] or [1 1].",
-        )
+        error(string(
+            "Please make sure the initial condition is a size 1 x n matrix, instead of a size ", size(u0), " ",typeof(u0),
+            "\neg: [1] or [1 1]."
+        ))
     elseif !isa(phase_index, Int)
         error("Please enter an integer for the phase index.")
     elseif phase_index < 0

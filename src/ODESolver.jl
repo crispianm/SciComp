@@ -196,15 +196,17 @@ function solve_ode(ode, u0, t; method = "rk4", Δt = 0.01, arg...)
     if t[1] != 0
         error("Please make sure the first value of the time series is 0.")
     elseif length(t) < 2
-        error("Please make sure the time series has at least 2 values.")
+        error(string("Please make sure the time series has at least 2 values, instead of ", length(t),"."))
     elseif !isa(u0, Array)
-        error(
-            "Please make sure the initial condition is a 1 x n matrix.\neg: [1] or [1 1].",
-        )
+        error(string(
+            "Please make sure the initial condition is a 1 x n matrix, not a ", typeof(u0), 
+            ".\neg: [1] or [1 1].",
+        ))
     elseif size(u0)[1] != 1
-        error(
-            "Please make sure the initial condition is a 1 x n matrix.\neg: [1] or [1 1].",
-        )
+        error(string(
+            "Please make sure the initial condition is a 1 x n matrix, instead of ", size(u0),
+            "\neg: [1] or [1 1]."
+        ))
     end
 
     # Check method is allowed
